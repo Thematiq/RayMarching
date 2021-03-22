@@ -74,9 +74,22 @@ if (${BUILD_UTEST})
     message("===== RUNNING UNIT TESTS BUILD =====")
     # Options
     option(EXAMPLE_TEST "Run example unit test" ON)
+    option(MODELS2_TEST "Run 2D models unit tests" ON)
+    option(MODELS3_TEST "Run 3D models unit tests" ON)
 
     if (${EXAMPLE_TEST})
+        message("Setting up example tests")
         add_subdirectory(example)
+    endif()
+
+    if (${MODELS2_TEST})
+        message("Setting up 2D models tests")
+        add_subdirectory(models/2d)
+    endif()
+
+    if (${MODELS3_TEST})
+        message("Setting up 3D models tests")
+        add_subdirectory(models/3d)
     endif()
 
 else()

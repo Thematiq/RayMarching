@@ -1,0 +1,1 @@
+add_gmock_test(MODELS3_TEST ${CMAKE_CURRENT_SOURCE_DIR})
