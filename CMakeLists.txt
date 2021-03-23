@@ -60,6 +60,13 @@ function(add_gmock_test target main_dir)
     add_test(${target} ${target})
 endfunction()
 
+# ===================================================================
+# OpenGL
+# ===================================================================
+
+find_package(OpenGL REQUIRED)
+find_package(GLM REQUIRED)
+find_package(GLFW3 REQUIRED)
 
 # ===================================================================
 # Main build options
@@ -101,4 +108,14 @@ else()
     add_executable(RayMarching
             main.cpp
             )
+
+    include_directories(
+            ${OPENGL_INCLUDE_DIRS}
+            ${GLFW_INCLUDE_DIRS}
+    )
+
+    target_link_libraries( RayMarching
+            OpenGL::GL
+            glfw
+    )
 endif()
