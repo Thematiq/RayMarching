@@ -110,7 +110,7 @@ else()
 
     add_executable(RayMarching
             main.cpp
-            )
+            src/models/Camera.cpp src/models/Camera.h src/models/Line.cpp src/models/Line.h tests/models/camera_test.cpp)
 
     include_directories(
             ${OPENGL_INCLUDE_DIRS}

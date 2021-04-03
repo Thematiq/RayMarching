@@ -18,6 +18,10 @@ public:
     double getX() const { return x; }
     double getY() const { return y; }
     double getZ() const { return z; }
+
+    Point3 operator=(const Point3 &p1){
+        return Point3(p1.getX(), p1.getY(), p1.getZ());
+    }
 };
 
 Point3 operator+(const Point3 &p1, const Point3 &p2);

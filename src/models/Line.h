@@ -6,8 +6,28 @@
 #define RAYMARCHING_LINE_H
 
 
-class Line {
+#include "models3.h"
 
+class Line {
+private:
+    Point3 begin;
+    double xShift;
+    double yShift;
+    double zShift;
+    double t;
+
+public:
+    Line(Point3 begin, Point3 direction): begin(begin), t{0}{
+        xShift = direction.getX() - begin.getX();
+        yShift = direction.getY() - begin.getY();
+        zShift = direction.getZ() - begin.getZ();
+    }
+
+    void moveBy(double distance);
+    void changeDirection();
+    Point3 getPoint3();
+    Point3 getPoint3(double shift);
+    Line getPerpendicular(Point3 p);
 };
 
 
