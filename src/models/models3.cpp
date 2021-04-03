@@ -1,5 +1,6 @@
 #include <cmath>
 #include "models3.h"
+#include <iostream>
 
 double Point3::getLargeNorm() const {
     return x*x + y*y + z*z;
@@ -7,6 +8,17 @@ double Point3::getLargeNorm() const {
 
 double Point3::getNorm() const {
     return sqrt(this->getLargeNorm());
+}
+
+void Point3::print() {
+    std::cout << "[" << x << ", " << y << ", " << z << "]" << std::endl;
+}
+
+Point3 &Point3::operator=(const Point3 &p1) {
+    x = p1.x;
+    y = p1.y;
+    z = p1.z;
+    return *this;
 }
 
 

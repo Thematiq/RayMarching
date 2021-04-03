@@ -18,32 +18,36 @@ class Camera {
 private:
     pixel* buffer;
     Point3 localization;
-    Point3 backLocalization;
-    Point3 topLocalization;
+    Line forward;
+    Line upward;
     int width;
     int height;
 
 public:
     Camera(Point3 localization, Point3 direction, double viewAngle, int width, int height) : localization(localization), width(width), height(height){
-        Line line = Line(localization, direction);
-        line.moveBy(- (PIXEL_DIMENSION * width / 2) / tan(viewAngle * PI / 180));
-        backLocalization = line.getPoint3();
-        topLocalization = Point3(0, 0 ,1) + localization;
+
+        forward = Line(localization, direction);
+        forward.moveBy((PIXEL_DIMENSION * width / 2) / tan(viewAngle * PI / 360));
+        forward.getPoint3().print();
+
+
+//        backLocalization = line.getPoint3();
+//        topLocalization = Point3(0, 0 ,1) + localization;
+
         buffer = new pixel [width * height * 3];
-        // halko
     }
 
     void setTopLocalization(Point3 topLocalization) {
-        this->topLocalization = topLocalization;
+        // this->topLocalization = topLocalization;
     }
 
-    Line getLine(int x, int y){
-
-        Point3 direction = Point3();
-        Line line = Line(direction, backLocalization);
-        line.changeDirection();
-        return line;
-    }
+//    Line getLine(int x, int y){
+//
+//        Point3 direction = Point3();
+//        Line line = Line(direction, backLocalization);
+//        line.changeDirection();
+//        return line;
+//    }
 };
 
 

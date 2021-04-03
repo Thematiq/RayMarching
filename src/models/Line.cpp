@@ -8,9 +8,6 @@ void Line::moveBy(double distance) {
     this->t += distance / sqrt(pow(xShift, 2) + pow(yShift, 2) + pow(zShift, 2));
 }
 
-void Line::changeDirection() {
-    this->t = -this->t;
-}
 
 Point3 Line::getPoint3() {
     return Point3(begin.getX() + t * xShift, begin.getY() + t * yShift, begin.getZ() + t * zShift);
@@ -24,6 +21,10 @@ Line Line::getPerpendicular(Point3 p) {
     double shift = -(begin.getX() * p.getX() + begin.getY() * p.getY() + begin.getZ() * p.getZ()) /
             (xShift * p.getX() + yShift * p.getY() + zShift * p.getZ());
     return Line(this->getPoint3(shift), p);
+}
+
+void Line::print() {
+    std::cout << "Line: " << xShift << ", " << yShift << ", " << zShift << std::endl;
 }
 
 

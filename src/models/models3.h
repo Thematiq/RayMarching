@@ -18,10 +18,9 @@ public:
     double getX() const { return x; }
     double getY() const { return y; }
     double getZ() const { return z; }
+    void print();
 
-    Point3 operator=(const Point3 &p1){
-        return Point3(p1.getX(), p1.getY(), p1.getZ());
-    }
+    Point3& operator=(const Point3 &p1);
 };
 
 Point3 operator+(const Point3 &p1, const Point3 &p2);
@@ -31,5 +30,7 @@ Point3 operator-(const Point3 &p1);
 Point3 operator-(const Point3 &p1, const Point3 &p2);
 
 bool operator==(const Point3 &lhs, const Point3 &rhs);
+
+
 
 #endif //RAYMARCHING_MODELS3_H
