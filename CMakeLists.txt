@@ -41,14 +41,29 @@ endif()
 # GTEST cmake macro
 # ===================================================================
 
-function(add_gmock_test target main_dir)
-    set(CXX_HEADERS ${main_dir}/inc)
-    file(GLOB CXX_SRC "${main_dir}/src/*.cpp")
-    file(GLOB CXX_TEST "${main_dir}/tests/*.cpp")
+set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tests)
+
+
+function(add_gmock_test target module)
+    set(CXX_HEADERS ${SOURCE_DIR}/${module})
+    file(GLOB CXX_SRC "${SOURCE_DIR}/${module}/*.cpp")
+    file(GLOB CXX_TEST "${TEST_DIR}/${module}/*.cpp")
     add_executable(${target} ${CXX_TEST} ${CXX_SRC})
     target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic)
     target_include_directories(${target} PUBLIC ${CXX_HEADERS})
     target_link_libraries(${target} PUBLIC gtest_main)
+    cmake_parse_arguments(TARGET
+            "" "ENV" "" ${ARGN}
+            )
+    if (NOT DEFINED TARGET_ENV)
+        set(TARGET_ENV "")
+    endif()
+
+    message("TEST ${target}")
+    message("ENV ${TARGET_ENV}")
+
+    target_compile_definitions(${target} PRIVATE ${TARGET_ENV})
 
     add_custom_command(
             TARGET ${target}
@@ -80,23 +95,11 @@ if (${BUILD_UTEST})
     # ===================================================================
     message("===== RUNNING UNIT TESTS BUILD =====")
     # Options
-    option(EXAMPLE_TEST "Run example unit test" ON)
-    option(MODELS2_TEST "Run 2D models unit tests" ON)
-    option(MODELS3_TEST "Run 3D models unit tests" ON)
+    option(MODELS_TEST "Run 2D models unit tests" ON)
 
-    if (${EXAMPLE_TEST})
-        message("Setting up example tests")
-        add_subdirectory(example)
-    endif()
-
-    if (${MODELS2_TEST})
-        message("Setting up 2D models tests")
-        add_subdirectory(models/2d)
-    endif()
-
-    if (${MODELS3_TEST})
-        message("Setting up 3D models tests")
-        add_subdirectory(models/3d)
+    if (${MODELS_TEST})
+        message("Setting up models tests")
+        add_subdirectory(tests/models)
     endif()
 
 else()

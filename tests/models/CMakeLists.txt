@@ -1,0 +1,1 @@
+add_gmock_test(MODELS_TEST models)
