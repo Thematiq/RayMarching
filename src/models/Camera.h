@@ -30,6 +30,7 @@ public:
         backLocalization = line.getPoint3();
         topLocalization = Point3(0, 0 ,1) + localization;
         buffer = new pixel [width * height * 3];
+        // halko
     }
 
     void setTopLocalization(Point3 topLocalization) {
