@@ -108,13 +108,24 @@ else()
     # ===================================================================
     message("===== RUNNING MAIN APP BUILD =====")
 
+    # Add models directory to main build
+    set(MODELS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/models")
+    file(GLOB MODELS_CXX "${CMAKE_CURRENT_SOURCE_DIR}/src/models/*.cpp")
+    file(GLOB MODELS_INC "${CMAKE_CURRENT_SOURCE_DIR}/src/models/*.h")
+
     add_executable(RayMarching
             main.cpp
-            src/models/Camera.cpp src/models/Camera.h src/models/Line.cpp src/models/Line.h tests/models/camera_test.cpp)
+            ${MODELS_CXX} ${MODELS_INC}
+            )
 
     include_directories(
             ${OPENGL_INCLUDE_DIRS}
             ${GLFW_INCLUDE_DIRS}
+    )
+
+    target_include_directories(
+            RayMarching PUBLIC
+            ${MODELS_DIR}
     )
 
     target_link_libraries( RayMarching
