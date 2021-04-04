@@ -13,5 +13,5 @@ constexpr double epsilon = 0.000000001;
 #define EXPECT_AEQ(X, Y) EXPECT_TRUE(X - Y <= epsilon)
 
 TEST(Camera_test, arithmetic_test) {
-    Camera cam = Camera(Point3(0,0,0), Point3(5,2,-1), 60, 1280, 720);
+    Camera cam = Camera(Point3(0,0,0), Point3(1,0,0), Point3(0, 0, 1), 60, 1280, 720);
 }

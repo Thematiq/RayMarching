@@ -10,7 +10,7 @@
 #include "Line.h"
 
 #define PI 3.14159265
-#define PIXEL_DIMENSION 0.000001
+#define CAMERA_SIZE 0.000001
 
 using pixel = unsigned char;
 
@@ -18,36 +18,38 @@ class Camera {
 private:
     pixel* buffer;
     Point3 localization;
-    Line forward;
-    Line upward;
+    Vector forward;
+    Vector upward;
+    double viewAngle;
     int width;
     int height;
 
 public:
-    Camera(Point3 localization, Point3 direction, double viewAngle, int width, int height) : localization(localization), width(width), height(height){
+    Camera(Point3 localization, Point3 direction, Point3 up, double viewAngle, int width, int height)
+            : localization(localization), viewAngle(viewAngle), width(width), height(height), forward(localization, direction){
 
-        forward = Line(localization, direction);
-        forward.moveBy((PIXEL_DIMENSION * width / 2) / tan(viewAngle * PI / 360));
-        forward.getPoint3().print();
+        Point3 p0 = Point3(7, 3, -4);
+        Point3 p  = Point3(-2,-1, 6);
 
+        Vector u = Vector(-3, 2, 5);
 
-//        backLocalization = line.getPoint3();
-//        topLocalization = Point3(0, 0 ,1) + localization;
+        double a = (u.getX() * (p.getX() - p0.getX()) + u.getY() * (p.getY() - p0.getY()) + u.getZ() * (p.getZ() - p0.getZ())) /
+                (u.getX() * u.getX() + u.getY() * u.getY() + u.getZ() * u.getZ());
+
+        Vector shift = u.extend(a);
+        Point3 A = shift.movePoint(p0);
+        std::cout << "a = " << a << std::endl << "Point A: " << A.getX() << ", " << A.getY() << ", " << A.getZ() << std::endl;
+
+        Vector AP = Vector(A, p);
+        std::cout << "Vector AP: " << AP.getX() << ", " << AP.getY() << ", " << AP.getZ() << std::endl;
+
+        double dot_p = AP.dot(u);
+
+        std::cout << "dot: " << dot_p << std::endl;
 
         buffer = new pixel [width * height * 3];
     }
 
-    void setTopLocalization(Point3 topLocalization) {
-        // this->topLocalization = topLocalization;
-    }
-
-//    Line getLine(int x, int y){
-//
-//        Point3 direction = Point3();
-//        Line line = Line(direction, backLocalization);
-//        line.changeDirection();
-//        return line;
-//    }
 };
 
 
