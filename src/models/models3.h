@@ -60,8 +60,30 @@ public:
     Vector add(const Vector &v) const;
     Vector extend(double m) const;
     Vector cross(const Vector &v) const;
+    Vector versor() const;
+    Vector perpendicular(Point3 &pOnLine, Point3 &direction) const;
     double dot(const Vector &v) const;
 };
 
+
+
+class Line {
+private:
+    Vector direction;
+    Point3 begin;
+    double t;
+
+public:
+    Line(): t(0){
+        direction = Vector();
+        begin = Point3();
+    }
+    Line(Vector direction, Point3 begin): begin(begin), direction(direction), t(0) {}
+
+    Line& operator=(const Line &line);
+
+    void moveBy(double distance);
+    Point3 getPoint3();
+};
 
 #endif //RAYMARCHING_MODELS3_H

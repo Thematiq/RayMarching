@@ -7,10 +7,8 @@
 
 #include <cmath>
 #include "models3.h"
-#include "Line.h"
 
 #define PI 3.14159265
-#define CAMERA_SIZE 0.000001
 
 using pixel = unsigned char;
 
@@ -20,34 +18,47 @@ private:
     Point3 localization;
     Vector forward;
     Vector upward;
+    Vector right;
     double viewAngle;
     int width;
     int height;
 
 public:
     Camera(Point3 localization, Point3 direction, Point3 up, double viewAngle, int width, int height)
-            : localization(localization), viewAngle(viewAngle), width(width), height(height), forward(localization, direction){
+            : localization(localization), viewAngle(viewAngle), width(width), height(height){
 
-        Point3 p0 = Point3(7, 3, -4);
-        Point3 p  = Point3(-2,-1, 6);
+        forward = Vector(localization, direction).versor();
+        upward = forward.perpendicular(localization, up).versor();
+        right = forward.cross(upward).versor();
 
-        Vector u = Vector(-3, 2, 5);
-
-        double a = (u.getX() * (p.getX() - p0.getX()) + u.getY() * (p.getY() - p0.getY()) + u.getZ() * (p.getZ() - p0.getZ())) /
-                (u.getX() * u.getX() + u.getY() * u.getY() + u.getZ() * u.getZ());
-
-        Vector shift = u.extend(a);
-        Point3 A = shift.movePoint(p0);
-        std::cout << "a = " << a << std::endl << "Point A: " << A.getX() << ", " << A.getY() << ", " << A.getZ() << std::endl;
-
-        Vector AP = Vector(A, p);
-        std::cout << "Vector AP: " << AP.getX() << ", " << AP.getY() << ", " << AP.getZ() << std::endl;
-
-        double dot_p = AP.dot(u);
-
-        std::cout << "dot: " << dot_p << std::endl;
+        std::cout << "Vector forward: " << forward.getX() << ", " << forward.getY() << ", " << forward.getZ() << std::endl;
+        std::cout << "Vector upward: " << upward.getX() << ", " << upward.getY() << ", " << upward.getZ() << std::endl;
+        std::cout << "Vector right: " << right.getX() << ", " << right.getY() << ", " << right.getZ() << std::endl;
+        std::cout << width << ", " << height << " | " << viewAngle << std::endl;
 
         buffer = new pixel [width * height * 3];
+
+        Line line;
+        for(int j = 0; j < height; j++){
+            for(int i = 0; i < width; i++){
+                line = getRay(i, j);
+            }
+        }
+
+    }
+
+    Line getRay(int x, int y) const{
+        double angleHorizontal = (x - width / 2) * viewAngle / width;
+        double angleVertical = - (y - height / 2) * viewAngle / width;
+        std::cout << angleHorizontal << ", " << angleVertical << std::endl;
+        Point3 pixelPoint = localization;
+        pixelPoint = forward.extend(cos(angleHorizontal * PI / 180) * cos(angleVertical * PI / 180)).movePoint(pixelPoint);
+        pixelPoint = right.extend(sin(angleHorizontal * PI / 180) * cos(angleVertical * PI / 180)).movePoint(pixelPoint);
+        pixelPoint = upward.extend(sin(angleVertical * PI / 180)).movePoint(pixelPoint);
+
+        std::cout << "Pixel point: " << pixelPoint.getX() << ", " << pixelPoint.getY() << ", " << pixelPoint.getZ() << std::endl;
+        Vector vec = Vector(localization, pixelPoint);
+        return Line(vec, localization);
     }
 
 };
