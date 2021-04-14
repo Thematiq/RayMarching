@@ -35,3 +35,7 @@ bool operator==(const Point3 &lhs, const Point3 &rhs) {
             lhs.getY() == rhs.getY() &&
             lhs.getZ() == rhs.getZ();
 }
+
+double Sphere::getDist(const Point3 &p) const {
+    return (p - pos).getNorm() - radius;
+}
