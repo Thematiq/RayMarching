@@ -80,34 +80,24 @@ double Vector::dot(const Vector &v) const {
     return x * v.getX() + y * v.getY() + z * v.getZ();
 }
 
-Vector Vector::versor()const {
-    std::cout << "versor fun " << this->getLength() << std::endl;
-    return this->extend(1/this->getLength());
+Vector Vector::versor() {
+    Vector *v = this;
+    v->setLength(1);
+    return *v;
 }
 
 Vector Vector::perpendicular(Point3 &onLine, Point3 &direction) const {
-    double factor = (
-            (
+    double factor = ((
                 x * (direction.getX() - onLine.getX()) +
                 y * (direction.getY() - onLine.getY()) +
                 z * (direction.getZ() - onLine.getZ())) /
             (x * x + y * y + z * z)
             );
-    std::cout << "perpendicular fun " << factor << std::endl;
-    onLine.print();
-    direction.print();
     return Vector(this->extend(factor).movePoint(onLine), direction);
 }
 
 
 
-
-Line &Line::operator=(const Line &line) {
-    begin = line.begin;
-    direction = line.direction;
-    t = 0;
-    return *this;
-}
 
 void Line::moveBy(double distance) {
     this->t += distance / direction.getLength();

@@ -1,6 +1,6 @@
 #include <iostream>
 #include <GLFW/glfw3.h>
-#include "src/models/Camera.h"
+#include "Camera.h"
 
 #define WIDTH 1280
 #define HEIGHT 720
@@ -17,7 +17,7 @@ int main() {
     }
     auto* buffer = new pixel[WIDTH * HEIGHT * 3];
 
-    Camera cam = Camera(Point3(0,0,0), Point3(1,0,0), Point3(0, 0, 1), 120, 1280, 720);
+    Camera cam = Camera(Point3(5,0,0), Point3(9,0,0), Point3(69, 0, 420), 60, WIDTH, HEIGHT);
 
     for (size_t x = 0; x < WIDTH; ++x) {
         for (size_t y = 0; y < HEIGHT; ++y) {
