@@ -9,14 +9,14 @@ double Point3::getNorm() const {
     return sqrt(this->getLargeNorm());
 }
 
-void Point3::print() {
-    std::cout << "[" << x << ", " << y << ", " << z << "]" << std::endl;
+void Point3::print() const {
+    std::cout << "[" << _x << ", " << _y << ", " << _z << "]" << std::endl;
 }
 
 Point3 &Point3::operator=(const Point3 &p1) {
-    x = p1.x;
-    y = p1.y;
-    z = p1.z;
+    _x = p1._x;
+    _y = p1._y;
+    _z = p1._z;
     return *this;
 }
 
@@ -52,32 +52,32 @@ Point3 operator+(const Point3 &p1, const Point3 &p2) {
 
 void Vector::setLength(double length) {
     double vectorLength = this->getLength();
-    x = length * x / vectorLength;
-    y = length * y / vectorLength;
-    z = length * z / vectorLength;
+    _x = length * _x / vectorLength;
+    _y = length * _y / vectorLength;
+    _z = length * _z / vectorLength;
 }
 
 Point3 Vector::movePoint(const Point3 &p) const {
-    return Point3(p.getX() + x, p.getY() + y, p.getZ() + z);
+    return Point3(p.getX() + _x, p.getY() + _y, p.getZ() + _z);
 }
 
 Vector Vector::add(const Vector &v) const {
-    return Vector(x + v.getX(), y + v.getY(), z + v.getZ());
+    return Vector(_x + v.getX(), _y + v.getY(), _z + v.getZ());
 }
 
 Vector Vector::extend(double m) const {
-    return Vector(x * m, y * m, z * m);
+    return Vector(_x * m, _y * m, _z * m);
 }
 
 Vector Vector::cross(const Vector &v) const {
     return Vector(
-            y * v.getZ() - z * v.getY(),
-            z * v.getX() - x * v.getZ(),
-            x * v.getY() - y * v.getX());
+            _y * v.getZ() - _z * v.getY(),
+            _z * v.getX() - _x * v.getZ(),
+            _x * v.getY() - _y * v.getX());
 }
 
 double Vector::dot(const Vector &v) const {
-    return x * v.getX() + y * v.getY() + z * v.getZ();
+    return _x * v.getX() + _y * v.getY() + _z * v.getZ();
 }
 
 Vector Vector::versor() {
@@ -88,10 +88,10 @@ Vector Vector::versor() {
 
 Vector Vector::perpendicular(Point3 &onLine, Point3 &direction) const {
     double factor = ((
-                x * (direction.getX() - onLine.getX()) +
-                y * (direction.getY() - onLine.getY()) +
-                z * (direction.getZ() - onLine.getZ())) /
-            (x * x + y * y + z * z)
+                _x * (direction.getX() - onLine.getX()) +
+                _y * (direction.getY() - onLine.getY()) +
+                _z * (direction.getZ() - onLine.getZ())) /
+            getLargeNorm()
             );
     return Vector(this->extend(factor).movePoint(onLine), direction);
 }

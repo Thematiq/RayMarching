@@ -22,7 +22,7 @@ int main() {
     for (size_t x = 0; x < WIDTH; ++x) {
         for (size_t y = 0; y < HEIGHT; ++y) {
             for (size_t c = 0; c < 3; ++c) {
-                buffer[3*(y * WIDTH + x) + c] = (x+y)*c % 256;
+                buffer[3*(y * WIDTH + x) + c] = x % 256;
             }
         }
     }

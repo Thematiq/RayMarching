@@ -29,6 +29,18 @@ add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
         ${CMAKE_CURRENT_BINARY_DIR}/googletest-build
         EXCLUDE_FROM_ALL)
 
+include(FetchContent)
+
+FetchContent_Declare(json
+        GIT_REPOSITORY https://github.com/nlohmann/json.git
+        GIT_TAG v3.7.3)
+
+FetchContent_GetProperties(json)
+if(NOT json_POPULATED)
+    FetchContent_Populate(json)
+    add_subdirectory(${json_SOURCE_DIR} ${json_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
+
 if (WIN32)
     # Prevent overriding the parent project's compiler/linker
     # settings on Windows
@@ -54,14 +66,17 @@ function(add_gmock_test target module)
     target_include_directories(${target} PUBLIC ${CXX_HEADERS})
     target_link_libraries(${target} PUBLIC gtest_main)
     cmake_parse_arguments(TARGET
-            "" "ENV" "" ${ARGN}
+            "" "ENV;LINK" "" ${ARGN}
             )
     if (NOT DEFINED TARGET_ENV)
         set(TARGET_ENV "")
     endif()
 
+    message("==================================")
     message("TEST ${target}")
     message("ENV ${TARGET_ENV}")
+    message("LIBS ${TARGET_LINK}")
+    message("==================================")
 
     target_compile_definitions(${target} PRIVATE ${TARGET_ENV})
 
@@ -72,6 +87,14 @@ function(add_gmock_test target module)
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
             COMMENT "Running ${target}" VERBATIM
     )
+
+    if (DEFINED TARGET_LINK)
+        target_link_libraries(
+                ${target} PRIVATE
+                ${TARGET_LINK}
+        )
+    endif()
+
     add_test(${target} ${target})
 endfunction()
 
@@ -130,6 +153,7 @@ else()
 
     target_link_libraries( RayMarching
             OpenGL::GL
+            nlohmann_json::nlohmann_json
             glfw
     )
 endif()

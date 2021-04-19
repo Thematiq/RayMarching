@@ -5,14 +5,14 @@
 #ifndef RAYMARCHING_MODELS3_H
 #define RAYMARCHING_MODELS3_H
 #include <cfloat>
-
+#include <cmath>
 #include <iostream>
 
 /**
  * Class representing point (or vector) in 3D space
  */
 class Point3 {
-private:
+protected:
     double _x;
     double _y;
     double _z;
@@ -22,7 +22,10 @@ public:
      */
     Point3() = default;
     Point3(double x, double y, double z) : _x(x), _y(y), _z(z) {};
-    void print();
+    void print() const;
+    [[nodiscard]] double getX() const { return _x; }
+    [[nodiscard]] double getY() const { return _y; }
+    [[nodiscard]] double getZ() const { return _z; }
     Point3& operator=(const Point3 &p1);
     /**
      * Norm without square root
@@ -34,9 +37,6 @@ public:
      * @return norm value
      */
     [[nodiscard]] double getNorm() const;
-    [[nodiscard]] double getX() const { return _x; }
-    [[nodiscard]] double getY() const { return _y; }
-    [[nodiscard]] double getZ() const { return _z; }
 };
 
 Point3 operator+(const Point3 &p1, const Point3 &p2);
@@ -49,27 +49,17 @@ bool operator==(const Point3 &lhs, const Point3 &rhs);
 
 
 
-class Vector {
-    double x;
-    double y;
-    double z;
-
+class Vector : public Point3 {
 public:
-    Vector(double x = 0, double y = 0, double z = 0) : x(x), y(y), z(z){};
-    Vector(const Point3 begin, const Point3 end){
-        x = end.getX() - begin.getX();
-        y = end.getY() - begin.getY();
-        z = end.getZ() - begin.getZ();
+    explicit Vector(double x = 0, double y = 0, double z = 0) : Point3(x, y, z) {};
+    Vector(const Point3 begin, const Point3 end) {
+        _x = end.getX() - begin.getX();
+        _y = end.getY() - begin.getY();
+        _z = end.getZ() - begin.getZ();
     }
-
-    double getX() const { return x; }
-    double getY() const { return y; }
-    double getZ() const { return z; }
-    double getLength() const { return sqrt(x*x + y*y + z*z); }
+    double getLength() const { return sqrt(_x*_x + _y*_y + _z*_z); }
     void setLength(double length);
-
     Vector& operator=(const Vector &v) = default;
-
     Point3 movePoint(const Point3 &p) const;
     Vector add(const Vector &v) const;
     Vector extend(double m) const;
@@ -83,16 +73,14 @@ public:
 
 class Line {
 private:
-    Vector direction;
     Point3 begin;
+    Vector direction;
     double t;
 
 public:
-    Line(Vector direction = Vector(), Point3 begin = Point3()): begin(begin), direction(direction), t(0) {}
-
+    Line(Vector direction, Point3 begin): begin(begin), direction(direction), t(0) {}
     void moveBy(double distance);
     Point3 getPoint3();
-
 };
 
 class Shape {
