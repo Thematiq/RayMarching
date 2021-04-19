@@ -32,3 +32,10 @@ TEST(Scene_test, from_file) {
     ASSERT_EQ(a->getPos(), Point3(0, 0, 0));
     ASSERT_EQ(a->getRadius(), 0.0);
 }
+
+TEST(Scene_test, destroy) {
+    auto scene = Scene::getFromFile(TEST_SCENE);
+    ASSERT_EQ(1, scene.getShapesSize());
+    scene.destroyShape(0);
+    ASSERT_EQ(0, scene.getShapesSize());
+}
