@@ -2,7 +2,7 @@
 #include "models3.h"
 
 double Point3::getLargeNorm() const {
-    return x*x + y*y + z*z;
+    return _x*_x + _y*_y + _z*_z;
 }
 
 double Point3::getNorm() const {
@@ -105,4 +105,8 @@ void Line::moveBy(double distance) {
 
 Point3 Line::getPoint3() {
     return direction.extend(t).movePoint(begin);
+}
+
+double Sphere::getDist(const Point3 &p) const {
+    return (p - _pos).getNorm() - _radius;
 }
