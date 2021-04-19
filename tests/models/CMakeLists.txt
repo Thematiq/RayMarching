@@ -1,1 +1,1 @@
-add_gmock_test(MODELS_TEST models)
+add_gmock_test(MODELS_TEST models ENV TEST_SCENE="${CMAKE_SOURCE_DIR}/data/example_scene.json" LINK nlohmann_json::nlohmann_json)
