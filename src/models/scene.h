@@ -8,16 +8,16 @@
 
 class Scene {
 private:
-    std::vector<Shape*> content;
+    std::vector<Shape*> _content;
 public:
     Scene() = default;
-    Scene(Shape** const &items, size_t size) : content(items, items + size) {};
+    Scene(Shape** const &items, size_t size) : _content(items, items + size) {};
     ~Scene();
     static Scene getFromFile(const std::string& filename);
     [[nodiscard]] double signedDistFunction(Point3 const &p) const;
-    size_t getShapesSize() const { return content.size(); }
-    Shape* getShape(size_t index) const { return content[index]; };
-    void pushShape(Shape* sh) { content.push_back(sh); };
+    [[nodiscard]] size_t getShapesSize() const { return _content.size(); }
+    [[nodiscard]] Shape* getShape(size_t index) const { return _content[index]; };
+    void pushShape(Shape* sh) { _content.push_back(sh); };
     void destroyShape(size_t index);
 };
 

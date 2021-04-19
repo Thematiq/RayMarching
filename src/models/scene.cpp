@@ -5,7 +5,7 @@
 using json = nlohmann::json;
 
 Scene::~Scene() {
-    for(auto obj : content) {
+    for(auto obj : _content) {
         delete obj;
     }
 }
@@ -33,14 +33,14 @@ Scene Scene::getFromFile(const std::string& filename) {
 
 double Scene::signedDistFunction(const Point3 &p) const {
     auto minVal = DBL_MAX;
-    for (const auto& obj : content) {
+    for (const auto& obj : _content) {
         minVal = std::min(obj->getDist(p), minVal);
     }
     return minVal;
 }
 
 void Scene::destroyShape(size_t index) {
-    Shape* sh = content[index];
-    content.erase(content.begin() + (long)index);
+    Shape* sh = _content[index];
+    _content.erase(_content.begin() + (long)index);
     delete sh;
 }

@@ -11,30 +11,30 @@
  */
 class Point3 {
 private:
-    double x;
-    double y;
-    double z;
+    double _x;
+    double _y;
+    double _z;
 public:
     /**
      * Creates point at (0, 0, 0)
      */
     Point3() = default;
-    Point3(double _x, double _y, double _z) : x(_x), y(_y), z(_z) {};
+    Point3(double x, double y, double z) : _x(x), _y(y), _z(z) {};
 
     /**
      * Norm without square root
      * @return norm of the vector to the second power
      */
-    double getLargeNorm() const;
+    [[nodiscard]] double getLargeNorm() const;
 
     /**
      * Norm of the vector associated with the point
      * @return norm value
      */
-    double getNorm() const;
-    double getX() const { return x; }
-    double getY() const { return y; }
-    double getZ() const { return z; }
+    [[nodiscard]] double getNorm() const;
+    [[nodiscard]] double getX() const { return _x; }
+    [[nodiscard]] double getY() const { return _y; }
+    [[nodiscard]] double getZ() const { return _z; }
 };
 
 Point3 operator+(const Point3 &p1, const Point3 &p2);
@@ -47,21 +47,21 @@ bool operator==(const Point3 &lhs, const Point3 &rhs);
 
 class Shape {
 protected:
-    Point3 pos = Point3();
+    Point3 _pos = Point3();
 public:
-    explicit Shape(Point3 p) : pos(p) {};
+    explicit Shape(Point3 p) : _pos(p) {};
     virtual ~Shape() = default;
-    virtual double getDist(Point3 const &p) const { return DBL_MAX; };
-    virtual Point3 getPos() const { return pos; };
+    [[nodiscard]] virtual double getDist([[maybe_unused]] Point3 const &p) const { return DBL_MAX; };
+    [[nodiscard]] virtual Point3 getPos() const { return _pos; };
 };
 
 class Sphere : public Shape {
 private:
-    double radius;
+    double _radius;
 public:
-    explicit Sphere(Point3 p, double r = 0) : Shape(p), radius(r) {};
-    double getDist(const Point3 &p) const override;
-    double getRadius() const { return radius; }
+    explicit Sphere(Point3 p, double r = 0) : Shape(p), _radius(r) {};
+    [[nodiscard]] double getDist(const Point3 &p) const override;
+    [[nodiscard]] double getRadius() const { return _radius; }
 };
 
 #endif //RAYMARCHING_MODELS3_H
