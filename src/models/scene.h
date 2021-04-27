@@ -4,7 +4,10 @@
 #include <string>
 #include <fstream>
 #include <cfloat>
+#include <utility>
 #include "models3.h"
+
+using shapeDist = std::pair<double, Shape*>;
 
 class Scene {
 private:
@@ -14,6 +17,8 @@ public:
     Scene(Shape** const &items, size_t size) : _content(items, items + size) {};
     ~Scene();
     static Scene getFromFile(const std::string& filename);
+    [[nodiscard]] shapeDist signedPairFunction(Point3 const &p) const;
+    [[nodiscard]] Shape* signedShapeFunction(Point3 const &p) const;
     [[nodiscard]] double signedDistFunction(Point3 const &p) const;
     [[nodiscard]] size_t getShapesSize() const { return _content.size(); }
     [[nodiscard]] Shape* getShape(size_t index) const { return _content[index]; };

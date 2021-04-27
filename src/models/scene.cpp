@@ -31,12 +31,24 @@ Scene Scene::getFromFile(const std::string& filename) {
     return ret;
 }
 
-double Scene::signedDistFunction(const Point3 &p) const {
-    auto minVal = DBL_MAX;
-    for (const auto& obj : _content) {
-        minVal = std::min(obj->getDist(p), minVal);
+shapeDist Scene::signedPairFunction(const Point3 &p) const {
+    shapeDist ret = {DBL_MAX, nullptr};
+    for (auto &member : _content) {
+        double dst = member->getDist(p);
+        if (dst < ret.first) {
+            ret.first = dst;
+            ret.second = member;
+        }
     }
-    return minVal;
+    return ret;
+}
+
+Shape* Scene::signedShapeFunction(const Point3 &p) const {
+    return signedPairFunction(p).second;
+}
+
+double Scene::signedDistFunction(const Point3 &p) const {
+    return signedPairFunction(p).first;
 }
 
 void Scene::destroyShape(size_t index) {

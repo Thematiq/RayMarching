@@ -8,6 +8,9 @@
 #include <cmath>
 #include <iostream>
 
+#include "colors.h"
+
+
 /**
  * Class representing point (or vector) in 3D space
  */
@@ -86,11 +89,13 @@ public:
 class Shape {
 protected:
     Point3 _pos = Point3();
+    color_t _color = WHITE;
 public:
     explicit Shape(Point3 p) : _pos(p) {};
     virtual ~Shape() = default;
     [[nodiscard]] virtual double getDist([[maybe_unused]] Point3 const &p) const { return DBL_MAX; };
     [[nodiscard]] virtual Point3 getPos() const { return _pos; };
+    [[nodiscard]] color_t getColor() const { return _color; }
 };
 
 class Sphere : public Shape {

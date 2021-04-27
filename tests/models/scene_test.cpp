@@ -1,6 +1,11 @@
 #include <gtest/gtest.h>
 #include "scene.h"
 
+constexpr double epsilon = 0.000000001;
+
+// Define almost equal
+#define EXPECT_AEQ(X, Y) EXPECT_TRUE(std::abs((X) - (Y)) <= epsilon)
+
 TEST(Scene_test, default_scene) {
     auto scene = Scene();
     ASSERT_EQ(0, scene.getShapesSize());
@@ -27,7 +32,7 @@ TEST(Scene_test, from_array) {
 
 TEST(Scene_test, from_file) {
     auto scene = Scene::getFromFile(TEST_SCENE);
-    ASSERT_EQ(1, scene.getShapesSize());
+    ASSERT_EQ(2, scene.getShapesSize());
     auto a = (Sphere*) scene.getShape(0);
     ASSERT_EQ(a->getPos(), Point3(0, 0, 0));
     ASSERT_EQ(a->getRadius(), 0.0);
@@ -35,7 +40,13 @@ TEST(Scene_test, from_file) {
 
 TEST(Scene_test, destroy) {
     auto scene = Scene::getFromFile(TEST_SCENE);
-    ASSERT_EQ(1, scene.getShapesSize());
+    ASSERT_EQ(2, scene.getShapesSize());
     scene.destroyShape(0);
-    ASSERT_EQ(0, scene.getShapesSize());
+    ASSERT_EQ(1, scene.getShapesSize());
+}
+
+TEST(Scene_test, SDF) {
+    auto scene = Scene::getFromFile(TEST_SCENE);
+    auto p = Point3(-1, 0, 0);
+    EXPECT_AEQ(scene.signedDistFunction(p), 1);
 }
