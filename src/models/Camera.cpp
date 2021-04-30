@@ -4,6 +4,8 @@
 
 Camera::Camera(Point3 localization, Point3 direction, Point3 up, double viewAngle, int width, int height)
         : localization(localization), viewAngle(viewAngle), width(width), height(height){
+    buffer = new pixel [3 * width * height];
+    scene = std::make_shared<Scene>();
 
     forward = Vector(localization, direction).versor();
     upward = forward.perpendicular(localization, up).versor();
@@ -20,7 +22,6 @@ Camera::Camera(Point3 localization, Point3 direction, Point3 up, double viewAngl
             rays[y][x] = generateRay(x, y);
         }
     }
-    buffer = new pixel [width * height * 3];
 }
 
 Line Camera::generateRay(int x, int y) const {
@@ -35,4 +36,3 @@ Line Camera::generateRay(int x, int y) const {
     Vector vec = Vector(localization, pixelPoint);
     return Line(vec, localization);
 }
-

@@ -7,7 +7,6 @@
 #include <cfloat>
 #include <cmath>
 #include <iostream>
-
 #include "colors.h"
 
 
@@ -96,6 +95,7 @@ public:
     [[nodiscard]] virtual double getDist([[maybe_unused]] Point3 const &p) const { return DBL_MAX; };
     [[nodiscard]] virtual Point3 getPos() const { return _pos; };
     [[nodiscard]] color_t getColor() const { return _color; }
+    void setColor(color_t color){ _color = color; }
 };
 
 class Sphere : public Shape {
