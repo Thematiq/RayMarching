@@ -135,9 +135,13 @@ else()
     set(MODELS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/models")
     file(GLOB MODELS_CXX "${CMAKE_CURRENT_SOURCE_DIR}/src/models/*.cpp")
     file(GLOB MODELS_INC "${CMAKE_CURRENT_SOURCE_DIR}/src/models/*.h")
+    set(MAIN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/main")
+    file(GLOB MAIN_CXX  "${CMAKE_CURRENT_SOURCE_DIR}/src/main/*.cpp")
+    file(GLOB MAIN_INC "${CMAKE_CURRENT_SOURCE_DIR}/src/main/*.h")
+
 
     add_executable(RayMarching
-            main.cpp
+            ${MAIN_CXX} ${MAIN_INC}
             ${MODELS_CXX} ${MODELS_INC}
             )
 
@@ -149,6 +153,7 @@ else()
     target_include_directories(
             RayMarching PUBLIC
             ${MODELS_DIR}
+            ${MAIN_DIR}
     )
 
     target_link_libraries( RayMarching

@@ -1,4 +1,3 @@
-
 #include "Camera.h"
 
 
@@ -11,9 +10,9 @@ Camera::Camera(Point3 localization, Point3 direction, Point3 up, double viewAngl
     upward = forward.perpendicular(localization, up).versor();
     right = forward.cross(upward).versor();
 
-    std::cout << "Vector forward: " << forward.getX() << ", " << forward.getY() << ", " << forward.getZ() << std::endl;
-    std::cout << "Vector upward: " << upward.getX() << ", " << upward.getY() << ", " << upward.getZ() << std::endl;
-    std::cout << "Vector right: " << right.getX() << ", " << right.getY() << ", " << right.getZ() << std::endl;
+//    std::cout << "Vector forward: " << forward.getX() << ", " << forward.getY() << ", " << forward.getZ() << std::endl;
+//    std::cout << "Vector upward: " << upward.getX() << ", " << upward.getY() << ", " << upward.getZ() << std::endl;
+//    std::cout << "Vector right: " << right.getX() << ", " << right.getY() << ", " << right.getZ() << std::endl;
 
     rays = (Line **) malloc(sizeof(Line *) * height);
     for(int y = 0; y < height; y++){
@@ -29,9 +28,9 @@ Line Camera::generateRay(int x, int y) const {
     double angleVertical = - (y - (double)(height - 1) / 2) * viewAngle / width;
     // std::cout << "(x, y) " << x << ", " << y << " => " << angleHorizontal << ", " << angleVertical << std::endl;
     Point3 pixelPoint = localization;
-    pixelPoint = forward.extend(cos(angleHorizontal * PI / 180) * cos(angleVertical * PI / 180)).movePoint(pixelPoint);
-    pixelPoint = right.extend(sin(angleHorizontal * PI / 180) * cos(angleVertical * PI / 180)).movePoint(pixelPoint);
-    pixelPoint = upward.extend(sin(angleVertical * PI / 180)).movePoint(pixelPoint);
+    pixelPoint = forward.extend(cos(angleHorizontal * M_PI / 180) * cos(angleVertical * M_PI / 180)).movePoint(pixelPoint);
+    pixelPoint = right.extend(sin(angleHorizontal * M_PI / 180) * cos(angleVertical * M_PI / 180)).movePoint(pixelPoint);
+    pixelPoint = upward.extend(sin(angleVertical * M_PI / 180)).movePoint(pixelPoint);
     // std::cout << "Pixel point: " << pixelPoint.getX() << ", " << pixelPoint.getY() << ", " << pixelPoint.getZ() << std::endl;
     Vector vec = Vector(localization, pixelPoint);
     return Line(vec, localization);

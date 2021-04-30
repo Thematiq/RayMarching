@@ -1,9 +1,9 @@
 #include <iostream>
 #include <GLFW/glfw3.h>
-#include "Camera.h"
 
-#define WIDTH 1280
-#define HEIGHT 720
+#include "Camera.h"
+#include "const.h"
+
 
 using pixel = unsigned char;
 
@@ -15,22 +15,16 @@ int main() {
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
-    auto* buffer = new pixel[WIDTH * HEIGHT * 3];
 
-    Sphere sphere(Point3(0, 0, 0), 1);
-    sphere.setColor(BLUE);
+    Sphere sphere1(Point3(0, -1, 0), 1);
+    Sphere sphere2(Point3(0, 1, 0), 1);
+    sphere1.setColor(BLUE);
+
     Camera camera = Camera(Point3(-5,0,0), Point3(0,0,0), Point3(0, 0, 1));
     std::shared_ptr<Scene> scene = camera.getScene();
-    scene->pushShape(&sphere);
-    buffer = camera.takePhoto();
-
-//    for (size_t x = 0; x < WIDTH; ++x) {
-//        for (size_t y = 0; y < HEIGHT; ++y) {
-//            for (size_t c = 0; c < 3; ++c) {
-//                buffer[3*(y * WIDTH + x) + c] = x % 256;
-//            }
-//        }
-//    }
+    scene->pushShape(&sphere1);
+    scene->pushShape(&sphere2);
+    auto* buffer = camera.takePhoto();
 
     glfwMakeContextCurrent(window);
     glViewport(0, 0, WIDTH, HEIGHT);

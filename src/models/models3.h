@@ -88,7 +88,7 @@ public:
 class Shape {
 protected:
     Point3 _pos = Point3();
-    color_t _color = WHITE;
+    color_t _color = BLACK;
 public:
     explicit Shape(Point3 p) : _pos(p) {};
     virtual ~Shape() = default;

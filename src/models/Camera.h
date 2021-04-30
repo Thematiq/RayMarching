@@ -9,13 +9,7 @@
 #include "memory"
 #include "scene.h"
 #include "models3.h"
-
-#define PI 3.14159265
-#define WIDTH 1280
-#define HEIGHT 720
-#define VIEW_ANGLE 60
-#define MAX_STEPS 100
-#define EPSILON 0.01
+#include "const.h"
 
 using pixel = unsigned char;
 
