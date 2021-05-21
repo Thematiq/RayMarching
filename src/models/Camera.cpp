@@ -15,43 +15,57 @@ void applyColor(pixel* buffer, const unsigned int &x, const unsigned int &y, con
     buffer[posToBuf(x, y) + 2] = c.B;
 }
 
-Camera::Camera(Point3 localization, Point3 direction, Point3 up, double viewAngle, int width, int height, int threads)
-        : localization(localization), viewAngle(viewAngle), _width(width), _height(height),
-        _controller(threads < 0 ? std::thread::hardware_concurrency() : threads) {
-    buffer = new pixel [3 * width * height];
-    scene = std::make_shared<Scene>();
+Camera::~Camera() {
+    std::unique_lock<std::mutex> lk(_safety);
+    _terminate = true;
+    lk.unlock();
+    _caller.notify_all();
 
-    forward = Vector(localization, direction).versor();
-    upward = forward.perpendicular(localization, up).versor();
-    right = forward.cross(upward).versor();
-
-    rays = (Line **) malloc(sizeof(Line *) * height);
-    for(int y = 0; y < height; y++){
-        rays[y] = (Line *) malloc(sizeof(Line) * width);
-        for(int x = 0; x < width; x++){
-            rays[y][x] = generateRay(x, y);
-        }
+    for (unsigned int i = 0; i < _width; ++i) {
+        free(_rays[i]);
     }
+    delete[] _rays;
+    delete[] _buffer;
+}
+
+Camera::Camera(Point3 localization, Point3 direction, Point3 up, double viewAngle, int width, int height, int threads)
+        : _localization(localization), _viewAngle(viewAngle), _width(width), _height(height),
+        _controller(threads < 0 ? std::thread::hardware_concurrency() : threads) {
+    _buffer = new pixel [3 * width * height];
+    _scene = std::make_shared<Scene>();
+
+    _forward = Vector(localization, direction).versor();
+    _upward = _forward.perpendicular(localization, up).versor();
+    _right = _forward.cross(_upward).versor();
+
+    _rays = new Line*[_height];
+
     for (int i = 0; i < _controller.size(); ++i) {
         _controller[i] = std::thread(&Camera::threadHandler, this, i);
     }
+
+    for (unsigned int i = 0; i < _controller.size(); ++i) {
+        std::unique_lock<std::mutex> lk(_pickup);
+        _returner.wait(lk);
+        lk.unlock();
+    }
 }
 
-Line Camera::generateRay(int x, int y) const {
-    double angleHorizontal = (x - (double)(_width - 1) / 2) * viewAngle / _width;
-    double angleVertical = - (y - (double)(_height - 1) / 2) * viewAngle / _width;
-    Point3 pixelPoint = localization;
-    pixelPoint = forward.extend(cos(angleHorizontal * M_PI / 180) * cos(angleVertical * M_PI / 180)).movePoint(pixelPoint);
-    pixelPoint = right.extend(sin(angleHorizontal * M_PI / 180) * cos(angleVertical * M_PI / 180)).movePoint(pixelPoint);
-    pixelPoint = upward.extend(sin(angleVertical * M_PI / 180)).movePoint(pixelPoint);
-    Vector vec = Vector(localization, pixelPoint);
-    return Line(vec, localization);
+Line Camera::generateRay(unsigned int x, unsigned int y) const {
+    double angleHorizontal = (x - (double)(_width - 1) / 2) * _viewAngle / _width;
+    double angleVertical = - (y - (double)(_height - 1) / 2) * _viewAngle / _width;
+    Point3 pixelPoint = _localization;
+    pixelPoint = _forward.extend(cos(angleHorizontal * M_PI / 180) * cos(angleVertical * M_PI / 180)).movePoint(pixelPoint);
+    pixelPoint = _right.extend(sin(angleHorizontal * M_PI / 180) * cos(angleVertical * M_PI / 180)).movePoint(pixelPoint);
+    pixelPoint = _upward.extend(sin(angleVertical * M_PI / 180)).movePoint(pixelPoint);
+    Vector vec = Vector(_localization, pixelPoint);
+    return Line(vec, _localization);
 }
 
-color_t Camera::handleRay(unsigned int x, unsigned int y) {
-    Line ray = rays[y][x];
+color_t Camera::handleRay(unsigned int x, unsigned int y) const {
+    Line ray = _rays[y][x];
     for(int step = 0; step < MAX_STEPS; step++){
-        std::pair<double, Shape *> pair = scene->signedPairFunction(ray.getPoint3());
+        std::pair<double, Shape *> pair = _scene->signedPairFunction(ray.getPoint3());
         if(pair.first < EPSILON){
             return pair.second->getColor();
         }
@@ -68,21 +82,34 @@ pixel* Camera::takePhoto() {
         lk.unlock();
     }
 
-    return buffer;
+    return _buffer;
 }
 
 void Camera::threadHandler(unsigned int thread_id) {
     const unsigned int top_row = ceil(thread_id * (double)(_height) / _controller.size());
     const unsigned int bottom_row = ceil((thread_id + 1) * (double)(_height) / _controller.size());
+    // Init system
+    for (unsigned int y = top_row; y < bottom_row; ++y) {\
+        // We do not want to initialize Lines
+        _rays[y] = (Line*) calloc(_width, sizeof(Line));
+        for (unsigned int x = 0; x < _width; ++x) {
+            _rays[y][x] = generateRay(x, y);
+        }
+    }
+    _returner.notify_one();
+    // Await further instructions
     while (true) {
         std::unique_lock<std::mutex> lk(_safety);
         _caller.wait(lk);
-
+        bool status = _terminate;
         lk.unlock();
+        if (status) {
+            std::terminate();
+        }
         for (unsigned int y = top_row; y < bottom_row; ++y) {
             for (unsigned int x = 0; x < _width; ++x) {
                 color_t col = handleRay(x, y);
-                applyColor(buffer, x, y, col);
+                applyColor(_buffer, x, y, col);
             }
         }
         _returner.notify_one();
