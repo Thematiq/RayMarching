@@ -49,6 +49,9 @@ elseif (UNIX)
 
 endif()
 
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+
 # ===================================================================
 # GTEST cmake macro
 # ===================================================================
@@ -160,5 +163,7 @@ else()
             OpenGL::GL
             nlohmann_json::nlohmann_json
             glfw
+            Threads::Threads
     )
+
 endif()

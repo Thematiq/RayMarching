@@ -42,33 +42,24 @@ public:
 };
 
 Point3 operator+(const Point3 &p1, const Point3 &p2);
-
 Point3 operator-(const Point3 &p1);
-
 Point3 operator-(const Point3 &p1, const Point3 &p2);
-
 bool operator==(const Point3 &lhs, const Point3 &rhs);
-
-
 
 class Vector : public Point3 {
 public:
     explicit Vector(double x = 0, double y = 0, double z = 0) : Point3(x, y, z) {};
-    Vector(const Point3 begin, const Point3 end) {
-        _x = end.getX() - begin.getX();
-        _y = end.getY() - begin.getY();
-        _z = end.getZ() - begin.getZ();
-    }
-    double getLength() const { return sqrt(_x*_x + _y*_y + _z*_z); }
+    Vector(const Point3 begin, const Point3 end) : Point3(end - begin) {}
+    [[nodiscard]] double getLength() const { return getNorm(); }
     void setLength(double length);
     Vector& operator=(const Vector &v) = default;
-    Point3 movePoint(const Point3 &p) const;
-    Vector add(const Vector &v) const;
-    Vector extend(double m) const;
-    Vector cross(const Vector &v) const;
+    [[nodiscard]] Point3 movePoint(const Point3 &p) const;
+    [[nodiscard]] Vector add(const Vector &v) const;
+    [[nodiscard]] Vector extend(double m) const;
+    [[nodiscard]] Vector cross(const Vector &v) const;
     Vector versor();
     Vector perpendicular(Point3 &pOnLine, Point3 &direction) const;
-    double dot(const Vector &v) const;
+    [[nodiscard]] double dot(const Vector &v) const;
 };
 
 
