@@ -22,7 +22,11 @@ int main() {
     Sphere sphere2(Point3(0, 1, 0), 1);
     sphere1.setColor(BLUE);
 
-    Camera camera = Camera(Point3(-5,0,0), Point3(0,0,0), Point3(0, 0, 1));
+
+    const Point3 loc = Point3(-5, 0, 0);
+    const Point3 dir = Point3(0, 0, 0);
+    const Point3 up = Point3(0, 0, 1);
+    Camera camera = Camera(loc, dir, up, true);
     std::shared_ptr<Scene> scene = camera.getScene();
     scene->pushShape(&sphere1);
     scene->pushShape(&sphere2);
@@ -53,6 +57,7 @@ int main() {
     glViewport(0, 0, WIDTH, HEIGHT);
 
     while (!glfwWindowShouldClose(window)) {
+        buffer = camera.takePhoto();
         glDrawPixels(WIDTH, HEIGHT, GL_RGB, GL_UNSIGNED_BYTE, buffer);
 
         glfwPollEvents();

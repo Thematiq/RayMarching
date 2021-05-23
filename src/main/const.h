@@ -6,7 +6,7 @@ constexpr unsigned int HEIGHT = 720;
 
 constexpr double VIEW_ANGLE = 60;
 constexpr double EPSILON = 0.01;
-constexpr unsigned int MAX_STEPS = 100;
+constexpr unsigned int MAX_STEPS = 20;
 
 
 #endif //RAYMARCHING_CONST_H

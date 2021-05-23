@@ -28,8 +28,8 @@ Camera::~Camera() {
     delete[] _buffer;
 }
 
-Camera::Camera(Point3 localization, Point3 direction, Point3 up, double viewAngle, int width, int height, int threads)
-        : _localization(localization), _viewAngle(viewAngle), _width(width), _height(height),
+Camera::Camera(Point3 localization, Point3 direction, Point3 up, double viewAngle, int width, int height, int threads, bool use_interlacing)
+        : _localization(localization), _viewAngle(viewAngle), _width(width), _height(height), _interlacing(use_interlacing),
         _controller(threads < 0 ? std::thread::hardware_concurrency() : threads) {
     _buffer = new pixel [3 * width * height];
     _scene = std::make_shared<Scene>();
@@ -41,7 +41,7 @@ Camera::Camera(Point3 localization, Point3 direction, Point3 up, double viewAngl
     _rays = new Line*[_height];
 
     for (int i = 0; i < _controller.size(); ++i) {
-        _controller[i] = std::thread(&Camera::threadHandler, this, i);
+        _controller[i] = std::thread(&Camera::threadHandler, this, i, use_interlacing);
     }
 
     for (unsigned int i = 0; i < _controller.size(); ++i) {
@@ -85,7 +85,9 @@ pixel* Camera::takePhoto() {
     return _buffer;
 }
 
-void Camera::threadHandler(unsigned int thread_id) {
+void Camera::threadHandler(unsigned int thread_id, bool use_interlacing) {
+    bool interlace_odd = false;
+    const unsigned int increment_val = use_interlacing ? 2 : 1;
     const unsigned int top_row = ceil(thread_id * (double)(_height) / _controller.size());
     const unsigned int bottom_row = ceil((thread_id + 1) * (double)(_height) / _controller.size());
     // Init system
@@ -106,10 +108,13 @@ void Camera::threadHandler(unsigned int thread_id) {
         if (status) {
             std::terminate();
         }
-        for (unsigned int y = top_row; y < bottom_row; ++y) {
+        for (unsigned int y = top_row + (int)(interlace_odd); y < bottom_row; y += increment_val) {
             for (unsigned int x = 0; x < _width; ++x) {
                 color_t col = handleRay(x, y);
                 applyColor(_buffer, x, y, col);
+            }
+            if (use_interlacing) {
+                interlace_odd = !interlace_odd;
             }
         }
         _returner.notify_one();
