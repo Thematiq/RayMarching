@@ -6,6 +6,7 @@
 #include "scene.h"
 #include "models3.h"
 #include "const.h"
+#include "algebra.h"
 #include <thread>
 #include <vector>
 #include <condition_variable>
