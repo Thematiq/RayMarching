@@ -43,7 +43,7 @@ shapeDist Scene::signedPairFunction(const Point3 &p) const {
     return ret;
 }
 
-Shape* Scene::signedShapeFunction(const Point3 &p) const {
+SDFObject* Scene::signedShapeFunction(const Point3 &p) const {
     return signedPairFunction(p).second;
 }
 
@@ -52,7 +52,7 @@ double Scene::signedDistFunction(const Point3 &p) const {
 }
 
 void Scene::destroyShape(size_t index) {
-    Shape* sh = _content[index];
+    SDFObject* sh = _content[index];
     _content.erase(_content.begin() + (long)index);
     delete sh;
 }

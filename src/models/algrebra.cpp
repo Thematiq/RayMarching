@@ -12,11 +12,27 @@ void Point3::print() const {
     std::cout << "[" << _x << ", " << _y << ", " << _z << "]" << std::endl;
 }
 
+Point3 Point3::getPositive() const {
+    return Point3(
+            _x > 0 ? _x : 0,
+            _y > 0 ? _y : 0,
+            _z > 0 ? _z : 0
+    );
+}
+
 Point3 &Point3::operator=(const Point3 &p1) {
     _x = p1._x;
     _y = p1._y;
     _z = p1._z;
     return *this;
+}
+
+Point3 abs(const Point3 &p) {
+    return Point3(
+            std::abs(p.getX()),
+            std::abs(p.getY()),
+            std::abs(p.getZ())
+            );
 }
 
 Point3 operator-(const Point3 &p1) {

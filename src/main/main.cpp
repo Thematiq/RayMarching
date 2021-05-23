@@ -18,16 +18,19 @@ int main() {
         exit(EXIT_FAILURE);
     }
 
-    Sphere sphere1(Point3(0, -1, 0), 1);
-    Sphere sphere2(Point3(0, 1, 0), 1);
-    sphere1.setColor(BLUE);
 
-
-    const Point3 loc = Point3(-5, 0, 0);
+    const Point3 loc = Point3(-10, 0, 0);
     const Point3 dir = Point3(0, 0, 0);
     const Point3 up = Point3(0, 0, 1);
     Camera camera = Camera(loc, dir, up, true);
     std::shared_ptr<Scene> scene = camera.getScene();
+
+
+//    Cube q(Point3(0, -1, 0), Point3(1, 1, 1));
+//    scene->pushShape(&q);
+    Sphere sphere1(Point3(0, -1, 0), 1);
+    Sphere sphere2(Point3(0, 1, 0), 1);
+    sphere1.setColor(BLUE);
     scene->pushShape(&sphere1);
     scene->pushShape(&sphere2);
 

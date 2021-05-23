@@ -35,8 +35,10 @@ public:
      * @return norm value
      */
     [[nodiscard]] double getNorm() const;
+    [[nodiscard]] Point3 getPositive() const;
 };
 
+Point3 abs(const Point3 &p);
 Point3 operator+(const Point3 &p1, const Point3 &p2);
 Point3 operator-(const Point3 &p1);
 Point3 operator-(const Point3 &p1, const Point3 &p2);

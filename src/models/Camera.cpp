@@ -65,7 +65,7 @@ Line Camera::generateRay(unsigned int x, unsigned int y) const {
 color_t Camera::handleRay(unsigned int x, unsigned int y) const {
     Line ray = _rays[y][x];
     for(int step = 0; step < MAX_STEPS; step++){
-        std::pair<double, Shape *> pair = _scene->signedPairFunction(ray.getPoint3());
+        shapeDist pair = _scene->signedPairFunction(ray.getPoint3());
         if(pair.first < EPSILON){
             return pair.second->getColor();
         }
