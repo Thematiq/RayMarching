@@ -26,13 +26,13 @@ int main() {
     std::shared_ptr<Scene> scene = camera.getScene();
 
 
-//    Cube q(Point3(0, -1, 0), Point3(1, 1, 1));
-//    scene->pushShape(&q);
-    Sphere sphere1(Point3(0, -1, 0), 1);
-    Sphere sphere2(Point3(0, 1, 0), 1);
-    sphere1.setColor(BLUE);
-    scene->pushShape(&sphere1);
-    scene->pushShape(&sphere2);
+    Cube q(Point3(0, -1, 0), Point3(1, 1, 1));
+    scene->pushShape(&q);
+//    Sphere sphere1(Point3(0, -1, 0), 1);
+//    Sphere sphere2(Point3(0, 1, 0), 1);
+//    sphere1.setColor(BLUE);
+//    scene->pushShape(&sphere1);
+//    scene->pushShape(&sphere2);
 
     std::cout << "Context prepared" << std::endl;
 

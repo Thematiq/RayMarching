@@ -30,8 +30,9 @@ Camera::~Camera() {
 
 Camera::Camera(Point3 localization, Point3 direction, Point3 up, double viewAngle, int width, int height, int threads, bool use_interlacing)
         : _localization(localization), _viewAngle(viewAngle), _width(width), _height(height), _interlacing(use_interlacing),
-        _controller(threads < 0 ? std::thread::hardware_concurrency() : threads) {
+        _totalThreads(threads < 0 ? std::thread::hardware_concurrency() : threads) {
     _buffer = new pixel [3 * width * height];
+    _controller = std::vector<std::thread>(_totalThreads);
     _scene = std::make_shared<Scene>();
 
     _forward = Vector(localization, direction).versor();
@@ -40,13 +41,17 @@ Camera::Camera(Point3 localization, Point3 direction, Point3 up, double viewAngl
 
     _rays = new Line*[_height];
 
-    for (int i = 0; i < _controller.size(); ++i) {
+    for (int i = 0; i < _totalThreads; ++i) {
         _controller[i] = std::thread(&Camera::threadHandler, this, i, use_interlacing);
     }
 
-    for (unsigned int i = 0; i < _controller.size(); ++i) {
-        std::unique_lock<std::mutex> lk(_pickup);
+    _threadsReady = 0;
+    while (true) {
+        std::unique_lock<std::mutex> lk(_safety);
         _returner.wait(lk);
+        if (_totalThreads == _threadsReady) {
+            break;
+        }
         lk.unlock();
     }
 }
@@ -75,10 +80,14 @@ color_t Camera::handleRay(unsigned int x, unsigned int y) const {
 }
 
 pixel* Camera::takePhoto() {
+    _threadsReady = 0;
     _caller.notify_all();
-    for (int i = 0; i < _controller.size(); ++i) {
+    while (true) {
         std::unique_lock<std::mutex> lk(_pickup);
         _returner.wait(lk);
+        if (_threadsReady == _totalThreads) {
+            break;
+        }
         lk.unlock();
     }
 
@@ -88,8 +97,8 @@ pixel* Camera::takePhoto() {
 void Camera::threadHandler(unsigned int thread_id, bool use_interlacing) {
     bool interlace_odd = false;
     const unsigned int increment_val = use_interlacing ? 2 : 1;
-    const unsigned int top_row = ceil(thread_id * (double)(_height) / _controller.size());
-    const unsigned int bottom_row = ceil((thread_id + 1) * (double)(_height) / _controller.size());
+    const unsigned int top_row = ceil(thread_id * (double)(_height) / _totalThreads);
+    const unsigned int bottom_row = ceil((thread_id + 1) * (double)(_height) / _totalThreads);
     // Init system
     for (unsigned int y = top_row; y < bottom_row; ++y) {\
         // We do not want to initialize Lines
@@ -98,7 +107,11 @@ void Camera::threadHandler(unsigned int thread_id, bool use_interlacing) {
             _rays[y][x] = generateRay(x, y);
         }
     }
+    std::unique_lock<std::mutex> lk(_safety);
+    _threadsReady++;
+    lk.unlock();
     _returner.notify_one();
+
     // Await further instructions
     while (true) {
         std::unique_lock<std::mutex> lk(_safety);
@@ -117,6 +130,9 @@ void Camera::threadHandler(unsigned int thread_id, bool use_interlacing) {
                 interlace_odd = !interlace_odd;
             }
         }
+        lk.lock();
+        _threadsReady++;
+        lk.unlock();
         _returner.notify_one();
     }
 }

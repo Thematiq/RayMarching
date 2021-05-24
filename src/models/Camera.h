@@ -20,8 +20,9 @@ private:
     const int _width;
     const int _height;
     const bool _interlacing;
+    const unsigned int _totalThreads;
     bool _terminate = false;
-    size_t _frameID = 0;
+    int _threadsReady = 0;
     pixel* _buffer;
     Point3 _localization;
     Vector _forward;
