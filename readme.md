@@ -15,7 +15,7 @@
 
 #### Linux
 
-> sudo pacman -S glm glfw-x11
+> sudo pacman -S glm glfw-x11 eigen
 
 ### CLion
 

@@ -49,6 +49,9 @@ elseif (UNIX)
 
 endif()
 
+# Eigen
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
+
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
@@ -164,6 +167,7 @@ else()
             nlohmann_json::nlohmann_json
             glfw
             Threads::Threads
+            Eigen3::Eigen
     )
 
 endif()
