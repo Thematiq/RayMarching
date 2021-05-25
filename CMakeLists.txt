@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.17)
 project(RayMarching)
 
 set(CMAKE_CXX_STANDARD 17)
-
+set(CMAKE_CXX_FLAGS "-g -O3")
 
 # ===================================================================
 # Gtest unit tests setup

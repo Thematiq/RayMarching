@@ -66,10 +66,11 @@ class Line {
 private:
     Point3 begin;
     Vector direction;
+    double _dir_norm;
     double t;
 
 public:
-    Line(Vector direction, Point3 begin): begin(begin), direction(direction), t(0) {}
+    Line(Vector direction, Point3 begin): begin(begin), direction(direction), t(0), _dir_norm(direction.getLength()) {}
     void moveBy(double distance);
     Point3 getPoint3();
 };

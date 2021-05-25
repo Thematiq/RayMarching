@@ -115,7 +115,7 @@ Vector Vector::perpendicular(Point3 &onLine, Point3 &direction) const {
 
 
 void Line::moveBy(double distance) {
-    this->t += distance / direction.getLength();
+    this->t += distance / _dir_norm;
 }
 
 Point3 Line::getPoint3() {

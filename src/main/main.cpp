@@ -36,7 +36,7 @@ int main() {
 
     std::cout << "Context prepared" << std::endl;
 
-    constexpr unsigned int TRIALS = 1;
+    constexpr unsigned int TRIALS = 10;
     unsigned int times[TRIALS];
     pixel* buffer;
 
