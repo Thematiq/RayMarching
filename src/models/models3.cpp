@@ -1,11 +1,13 @@
 #include "models3.h"
 
-double Sphere::getDist(const Point3 &p) const {
-    return (p - _pos).getNorm() - _radius;
+using namespace Eigen;
+
+double Sphere::getDist(const Vector3d &p) const {
+    return (p - _pos).norm() - _radius;
 }
 
-double Cube::getDist(const Point3 &p) const {
-    Point3 val = abs(p) - _bound;
-    return val.getPositive().getNorm();
+double Cube::getDist(const Vector3d &p) const {
+    Vector3d val = (p).cwiseAbs() - _bound;
+    return (val.array() < 0).select(0, val).norm();
 }
 

@@ -1,6 +1,8 @@
 #include "Camera.h"
 
+constexpr double HALF_CIRCLE = M_PI / 180;
 const color_t Camera::BACKGROUND = WHITE;
+using namespace Eigen;
 
 // Assuming consts
 inline
@@ -13,6 +15,12 @@ void applyColor(pixel* buffer, const unsigned int &x, const unsigned int &y, con
     buffer[posToBuf(x, y)] = c.R;
     buffer[posToBuf(x, y) + 1] = c.G;
     buffer[posToBuf(x, y) + 2] = c.B;
+}
+
+inline
+Vector3d getPerpendicular(Vector3d vec, const Vector3d& onLine, const Vector3d& direction) {
+    double factor = ((direction - onLine).array() * vec.array()).sum() / vec.squaredNorm();
+    return direction -  ((vec * factor) + onLine);
 }
 
 Camera::~Camera() {
@@ -28,16 +36,16 @@ Camera::~Camera() {
     delete[] _buffer;
 }
 
-Camera::Camera(Point3 localization, Point3 direction, Point3 up, double viewAngle, int width, int height, int threads, bool use_interlacing)
-        : _localization(localization), _viewAngle(viewAngle), _width(width), _height(height), _interlacing(use_interlacing),
+Camera::Camera(Vector3d localization, const Vector3d& direction, Vector3d up, double viewAngle, int width, int height, int threads, bool use_interlacing)
+        : _localization(std::move(localization)), _viewAngle(viewAngle), _width(width), _height(height), _interlacing(use_interlacing),
         _totalThreads(threads < 0 ? std::thread::hardware_concurrency() : threads) {
     _buffer = new pixel [3 * width * height];
     _controller = std::vector<std::thread>(_totalThreads);
     _scene = std::make_shared<Scene>();
 
-    _forward = Vector(localization, direction).versor();
-    _upward = _forward.perpendicular(localization, up).versor();
-    _right = _forward.cross(_upward).versor();
+    _forward = (direction - localization).normalized();
+    _upward = getPerpendicular(_forward, localization, up);
+    _right = _forward.cross(_upward).normalized();
 
     _rays = new Line*[_height];
 
@@ -59,18 +67,18 @@ Camera::Camera(Point3 localization, Point3 direction, Point3 up, double viewAngl
 Line Camera::generateRay(unsigned int x, unsigned int y) const {
     double angleHorizontal = (x - (double)(_width - 1) / 2) * _viewAngle / _width;
     double angleVertical = - (y - (double)(_height - 1) / 2) * _viewAngle / _width;
-    Point3 pixelPoint = _localization;
-    pixelPoint = _forward.extend(cos(angleHorizontal * M_PI / 180) * cos(angleVertical * M_PI / 180)).movePoint(pixelPoint);
-    pixelPoint = _right.extend(sin(angleHorizontal * M_PI / 180) * cos(angleVertical * M_PI / 180)).movePoint(pixelPoint);
-    pixelPoint = _upward.extend(sin(angleVertical * M_PI / 180)).movePoint(pixelPoint);
-    Vector vec = Vector(_localization, pixelPoint);
+    Vector3d pixelPoint = _localization;
+    pixelPoint = (_forward * (cos(angleHorizontal * HALF_CIRCLE) * cos(angleVertical * HALF_CIRCLE))) + pixelPoint;
+    pixelPoint = (_right * (sin(angleHorizontal * HALF_CIRCLE) * cos(angleVertical * HALF_CIRCLE))) + pixelPoint;
+    pixelPoint = (_upward * sin(angleVertical * HALF_CIRCLE)) + pixelPoint;
+    Vector3d vec = pixelPoint - _localization;
     return Line(vec, _localization);
 }
 
 color_t Camera::handleRay(unsigned int x, unsigned int y) const {
     Line ray = _rays[y][x];
     for(int step = 0; step < MAX_STEPS; step++){
-        shapeDist pair = _scene->signedPairFunction(ray.getPoint3());
+        shapeDist pair = _scene->signedPairFunction(ray.getVec());
         if(pair.first < EPSILON){
             return pair.second->getColor();
         }

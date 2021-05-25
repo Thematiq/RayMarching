@@ -1,5 +1,7 @@
 #include "algebra.h"
 
+using namespace Eigen;
+
 double Point3::getLargeNorm() const {
     return _x*_x + _y*_y + _z*_z;
 }
@@ -115,9 +117,9 @@ Vector Vector::perpendicular(Point3 &onLine, Point3 &direction) const {
 
 
 void Line::moveBy(double distance) {
-    this->t += distance / _dir_norm;
+    t += distance / _dir_norm;
 }
 
-Point3 Line::getPoint3() {
-    return direction.extend(t).movePoint(begin);
+Vector3d Line::getVec() const {
+    return (direction * t) + begin;
 }

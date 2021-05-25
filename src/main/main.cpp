@@ -5,8 +5,9 @@
 
 #include "Camera.h"
 #include "const.h"
+#include <Eigen/Dense>
 
-
+using namespace Eigen;
 using pixel = unsigned char;
 
 int main() {
@@ -19,17 +20,17 @@ int main() {
     }
 
 
-    const Point3 loc = Point3(-10, 0, 0);
-    const Point3 dir = Point3(0, 0, 0);
-    const Point3 up = Point3(0, 0, 1);
+    const auto loc = Vector3d(-10, 0, 0);
+    const auto dir = Vector3d(0, 0, 0);
+    const auto up = Vector3d(0, 0, 1);
     Camera camera = Camera(loc, dir, up, true);
     std::shared_ptr<Scene> scene = camera.getScene();
 
 
-    Cube q(Point3(0, -1, 0), Point3(1, 1, 1));
+    Cube q(Vector3d(0, -1, 0), 1);
     scene->pushShape(&q);
-//    Sphere sphere1(Point3(0, -1, 0), 1);
-//    Sphere sphere2(Point3(0, 1, 0), 1);
+//    Sphere sphere1(Vector3d(0, -1, 0), 1);
+//    Sphere sphere2(Vector3d(0, 1, 0), 1);
 //    sphere1.setColor(BLUE);
 //    scene->pushShape(&sphere1);
 //    scene->pushShape(&sphere2);

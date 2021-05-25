@@ -4,7 +4,7 @@
 #include <cfloat>
 #include <cmath>
 #include <iostream>
-
+#include <Eigen/Dense>
 
 /**
  * Class representing point (or vector) in 3D space
@@ -64,15 +64,16 @@ public:
 
 class Line {
 private:
-    Point3 begin;
-    Vector direction;
+    Eigen::Vector3d begin;
+    Eigen::Vector3d direction;
     double _dir_norm;
     double t;
 
 public:
-    Line(Vector direction, Point3 begin): begin(begin), direction(direction), t(0), _dir_norm(direction.getLength()) {}
+    Line(Eigen::Vector3d direction, Eigen::Vector3d begin)
+     : begin(std::move(begin)), direction(std::move(direction)), t(0), _dir_norm(direction.norm()) {}
     void moveBy(double distance);
-    Point3 getPoint3();
+    [[nodiscard]] Eigen::Vector3d getVec() const;
 };
 
 
