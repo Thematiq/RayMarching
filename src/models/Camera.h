@@ -9,6 +9,8 @@
 #include "algebra.h"
 #include <thread>
 #include <vector>
+#include <queue>
+#include <atomic>
 #include <condition_variable>
 #include <Eigen/Dense>
 
@@ -23,19 +25,26 @@ private:
     const bool _interlacing;
     const unsigned int _totalThreads;
     bool _terminate = false;
-    int _threadsReady = 0;
     pixel* _buffer;
     Eigen::Vector3d _localization;
     Eigen::Vector3d _forward;
     Eigen::Vector3d _upward;
     Eigen::Vector3d _right;
     Line** _rays;
-    std::vector<std::thread> _controller;
+    std::vector<std::thread> _controllerInit;
+    std::vector<std::thread> _controllerDraw;
     std::condition_variable _caller;
-    std::mutex _safety;
+    std::mutex _callerMutex;
     std::condition_variable _returner;
     std::mutex _pickup;
     std::shared_ptr<Scene> _scene;
+    std::condition_variable _queueInitCond;
+    std::condition_variable _queueDrawCond;
+    std::mutex _queueMutex;
+    std::queue<unsigned int> _freeRows;
+    std::atomic<unsigned int> _threadsReady;
+    std::atomic<int> _rowsDrawed;
+    std::atomic<bool> _execute;
 
 public:
     /**
@@ -58,7 +67,8 @@ public:
     pixel* takePhoto();
 
 private:
-    [[noreturn]] void threadHandler(unsigned int thread_id, bool use_interlacing = false);
+    [[noreturn]] void drawingHandler();
+    [[noreturn]] void initHandler();
     [[nodiscard]] Line generateRay(unsigned int x, unsigned int y) const;
     [[nodiscard]] color_t handleRay(unsigned int x, unsigned int y) const;
 };

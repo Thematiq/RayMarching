@@ -8,5 +8,6 @@ constexpr double VIEW_ANGLE = 60;
 constexpr double EPSILON = 0.001;
 constexpr unsigned int MAX_STEPS = 20;
 
+//#define DEBUG
 
 #endif //RAYMARCHING_CONST_H

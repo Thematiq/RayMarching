@@ -37,7 +37,7 @@ int main() {
 
     std::cout << "Context prepared" << std::endl;
 
-    constexpr unsigned int TRIALS = 10;
+    constexpr unsigned int TRIALS = 50;
     unsigned int times[TRIALS];
     pixel* buffer;
 
@@ -55,6 +55,7 @@ int main() {
         total += time;
     }
     std::cout << "Avg time (ms) " << total / TRIALS << std::endl;
+    std::cout << "Avg FPS " << (1000.0f * TRIALS) / total << std::endl;
 
 
     glfwMakeContextCurrent(window);

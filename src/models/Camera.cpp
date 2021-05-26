@@ -24,11 +24,7 @@ Vector3d getPerpendicular(Vector3d vec, const Vector3d& onLine, const Vector3d& 
 }
 
 Camera::~Camera() {
-    std::unique_lock<std::mutex> lk(_safety);
-    _terminate = true;
-    lk.unlock();
-    _caller.notify_all();
-
+    _execute = true;
     for (unsigned int i = 0; i < _width; ++i) {
         free(_rays[i]);
     }
@@ -40,28 +36,33 @@ Camera::Camera(Vector3d localization, const Vector3d& direction, Vector3d up, do
         : _localization(std::move(localization)), _viewAngle(viewAngle), _width(width), _height(height), _interlacing(use_interlacing),
         _totalThreads(threads < 0 ? std::thread::hardware_concurrency() : threads) {
     _buffer = new pixel [3 * width * height];
-    _controller = std::vector<std::thread>(_totalThreads);
+    _controllerInit = std::vector<std::thread>(_totalThreads);
+    _controllerDraw = std::vector<std::thread>(_totalThreads);
     _scene = std::make_shared<Scene>();
 
     _forward = (direction - localization).normalized();
-    _upward = getPerpendicular(_forward, localization, up);
+    _upward = getPerpendicular(_forward, localization, up).normalized();
     _right = _forward.cross(_upward).normalized();
 
     _rays = new Line*[_height];
+    for (unsigned int i = 0; i < _height; ++i) {
+        _rays[i] = (Line*) calloc(_width, sizeof(Line));
+    }
+    _threadsReady = _totalThreads;
+    _rowsDrawed = 0;
+    _execute = false;
 
     for (int i = 0; i < _totalThreads; ++i) {
-        _controller[i] = std::thread(&Camera::threadHandler, this, i, use_interlacing);
+        _controllerInit[i] = std::thread(&Camera::initHandler, this);
+        _controllerDraw[i] = std::thread(&Camera::drawingHandler, this);
     }
-
-    _threadsReady = 0;
-    while (true) {
-        std::unique_lock<std::mutex> lk(_safety);
-        _returner.wait(lk);
-        if (_totalThreads == _threadsReady) {
-            break;
-        }
-        lk.unlock();
+    for (unsigned int i = 0; i < _height; ++i) {
+        std::lock_guard<std::mutex> lk(_queueMutex);
+        _freeRows.push(i);
+        _queueInitCond.notify_one();
     }
+    std::unique_lock<std::mutex> ck(_callerMutex);
+    _caller.wait(ck, [this] { return _rowsDrawed == _height; });
 }
 
 Line Camera::generateRay(unsigned int x, unsigned int y) const {
@@ -88,59 +89,57 @@ color_t Camera::handleRay(unsigned int x, unsigned int y) const {
 }
 
 pixel* Camera::takePhoto() {
-    _threadsReady = 0;
-    _caller.notify_all();
-    while (true) {
-        std::unique_lock<std::mutex> lk(_pickup);
-        _returner.wait(lk);
-        if (_threadsReady == _totalThreads) {
-            break;
-        }
-        lk.unlock();
+    // Assure preparedness
+    _rowsDrawed = 0;
+#ifdef DEBUG
+    std::cout << "DRAWING READY" << std::endl;
+#endif
+    for (unsigned int y = 0; y < _height; ++y) {
+        std::lock_guard<std::mutex> lk(_queueMutex);
+        _freeRows.push(y);
+        _queueDrawCond.notify_one();
     }
-
+    std::unique_lock<std::mutex> ck(_callerMutex);
+    _caller.wait(ck, [this] { return _rowsDrawed == _height; });
+#ifdef DEBUG
+    std::cout << std::endl << "==========" << std::endl;
+#endif
     return _buffer;
 }
 
-void Camera::threadHandler(unsigned int thread_id, bool use_interlacing) {
-    bool interlace_odd = false;
-    const unsigned int increment_val = use_interlacing ? 2 : 1;
-    const unsigned int top_row = ceil(thread_id * (double)(_height) / _totalThreads);
-    const unsigned int bottom_row = ceil((thread_id + 1) * (double)(_height) / _totalThreads);
-    // Init system
-    for (unsigned int y = top_row; y < bottom_row; ++y) {\
-        // We do not want to initialize Lines
-        _rays[y] = (Line*) calloc(_width, sizeof(Line));
+void Camera::initHandler() {
+    while (!_execute) {
+        std::unique_lock<std::mutex> lk(_queueMutex);
+        _queueInitCond.wait(lk, [this] { return _execute || !_freeRows.empty(); });
+        if (_execute) {
+            break;
+        }
+        unsigned int y = _freeRows.front();
+        _freeRows.pop();
+        lk.unlock();
         for (unsigned int x = 0; x < _width; ++x) {
             _rays[y][x] = generateRay(x, y);
         }
+        _rowsDrawed++;
+        _caller.notify_one();
     }
-    std::unique_lock<std::mutex> lk(_safety);
-    _threadsReady++;
-    lk.unlock();
-    _returner.notify_one();
+}
 
-    // Await further instructions
-    while (true) {
-        std::unique_lock<std::mutex> lk(_safety);
-        _caller.wait(lk);
-        bool status = _terminate;
-        lk.unlock();
-        if (status) {
-            std::terminate();
+void Camera::drawingHandler() {
+    while (!_execute) {
+        std::unique_lock<std::mutex> lk(_queueMutex);
+        _queueDrawCond.wait(lk, [this] { return _execute || !_freeRows.empty(); });
+        if (_execute) {
+            break;
         }
-        for (unsigned int y = top_row + (int)(interlace_odd); y < bottom_row; y += increment_val) {
-            for (unsigned int x = 0; x < _width; ++x) {
-                color_t col = handleRay(x, y);
-                applyColor(_buffer, x, y, col);
-            }
-            if (use_interlacing) {
-                interlace_odd = !interlace_odd;
-            }
-        }
-        lk.lock();
-        _threadsReady++;
+        unsigned int y = _freeRows.front();
+        _freeRows.pop();
         lk.unlock();
-        _returner.notify_one();
+        for (unsigned int x = 0; x < _width; ++x) {
+            color_t color = handleRay(x, y);
+            applyColor(_buffer, x, y, color);
+        }
+        _rowsDrawed++;
+        _caller.notify_one();
     }
 }
