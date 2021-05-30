@@ -11,7 +11,7 @@ double Cube::getDist(const Vector3d &p) const {
     return (val.array() < 0).select(0, val).norm();
 }
 
-Line Shape::getReflection(Line &ray) const {
+Line Shape::getReflection(const Line &ray) const {
     Eigen::Vector3d hit = ray.getVec();
 
     Eigen::Vector3d normal = Eigen::Vector3d(

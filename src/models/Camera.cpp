@@ -71,6 +71,9 @@ Line Camera::generateRay(unsigned int x, unsigned int y) const {
 }
 
 color_t Camera::handleRay(Line& ray, color_t color, unsigned int reflection) const{
+    if (reflection == 0) {
+        ray.reset();
+    }
     for(int step = 0; step < MAX_STEPS; step++){
         shapeDist pair = _scene->signedPairFunction(ray.getVec());
 
