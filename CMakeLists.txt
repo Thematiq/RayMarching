@@ -72,7 +72,10 @@ function(add_gmock_test target module)
     target_include_directories(${target} PUBLIC ${CXX_HEADERS})
     target_link_libraries(${target} PUBLIC gtest_main)
     cmake_parse_arguments(TARGET
-            "" "ENV;LINK" "" ${ARGN}
+            ""
+            "ENV"
+            "LINK"
+            ${ARGN}
             )
     if (NOT DEFINED TARGET_ENV)
         set(TARGET_ENV "")
@@ -141,14 +144,19 @@ else()
     set(MODELS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/models")
     file(GLOB MODELS_CXX "${CMAKE_CURRENT_SOURCE_DIR}/src/models/*.cpp")
     file(GLOB MODELS_INC "${CMAKE_CURRENT_SOURCE_DIR}/src/models/*.h")
+
     set(MAIN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/main")
     file(GLOB MAIN_CXX  "${CMAKE_CURRENT_SOURCE_DIR}/src/main/*.cpp")
     file(GLOB MAIN_INC "${CMAKE_CURRENT_SOURCE_DIR}/src/main/*.h")
 
+    set(TOOLS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/tools")
+    file(GLOB TOOLS_CXX "${CMAKE_CURRENT_SOURCE_DIR}/src/tools/*.cpp")
+    file(GLOB TOOLS_INC "${CMAKE_CURRENT_SOURCE_DIR}/src/tools/*.h")
 
     add_executable(RayMarching
             ${MAIN_CXX} ${MAIN_INC}
             ${MODELS_CXX} ${MODELS_INC}
+            ${TOOLS_CXX} ${TOOLS_INC}
             )
 
     include_directories(
@@ -160,6 +168,7 @@ else()
             RayMarching PUBLIC
             ${MODELS_DIR}
             ${MAIN_DIR}
+            ${TOOLS_DIR}
     )
 
     target_link_libraries( RayMarching
@@ -171,3 +180,10 @@ else()
     )
 
 endif()
+
+
+
+
+
+
+

@@ -24,7 +24,6 @@ Vector3d getPerpendicular(Vector3d vec, const Vector3d& onLine, const Vector3d& 
 }
 
 Camera::~Camera() {
-    _execute = true;
     for (unsigned int i = 0; i < _width; ++i) {
         free(_rays[i]);
     }
@@ -32,12 +31,15 @@ Camera::~Camera() {
     delete[] _buffer;
 }
 
-Camera::Camera(Vector3d localization, const Vector3d& direction, Vector3d up, double viewAngle, int width, int height, int threads, bool use_interlacing)
-        : _localization(std::move(localization)), _viewAngle(viewAngle), _width(width), _height(height), _interlacing(use_interlacing),
-        _totalThreads(threads < 0 ? std::thread::hardware_concurrency() : threads) {
+Camera::Camera(Vector3d localization, const Vector3d& direction, const Vector3d& up, double viewAngle, int width, int height, int threads, bool use_interlacing)
+        : _localization(std::move(localization)), _viewAngle(viewAngle), _width(width), _height(height), _interlace(use_interlacing),
+          _jumpDist(use_interlacing ? 2 : 1), _evenFrame(false), _totalThreads(threads < 0 ? std::thread::hardware_concurrency() : threads),
+          _awaitFor(use_interlacing ?  height / 2 : height) {
+    if (use_interlacing && (height % 2 != 0)) {
+        throw std::invalid_argument("Height must be multiple of two for interlacing!");
+    }
     _buffer = new pixel [3 * width * height];
-    _controllerInit = std::vector<std::thread>(_totalThreads);
-    _controllerDraw = std::vector<std::thread>(_totalThreads);
+    _drones = std::vector<std::thread>(_totalThreads);
     _scene = std::make_shared<Scene>();
 
     _forward = (direction - localization).normalized();
@@ -48,21 +50,13 @@ Camera::Camera(Vector3d localization, const Vector3d& direction, Vector3d up, do
     for (unsigned int i = 0; i < _height; ++i) {
         _rays[i] = (Line*) calloc(_width, sizeof(Line));
     }
-    _threadsReady = _totalThreads;
-    _rowsDrawed = 0;
-    _execute = false;
-
-    for (int i = 0; i < _totalThreads; ++i) {
-        _controllerInit[i] = std::thread(&Camera::initHandler, this);
-        _controllerDraw[i] = std::thread(&Camera::drawingHandler, this);
+    for (unsigned int i = 0; i < _totalThreads; ++i) {
+        _drones[i] = std::thread(&Camera::threadHandler, this);
     }
-    for (unsigned int i = 0; i < _height; ++i) {
-        std::lock_guard<std::mutex> lk(_queueMutex);
-        _freeRows.push(i);
-        _queueInitCond.notify_one();
+    applyCommand(CameraCommands::GENERATE);
+    if (_interlace) {
+        applyCommand(CameraCommands::GENERATE);
     }
-    std::unique_lock<std::mutex> ck(_callerMutex);
-    _caller.wait(ck, [this] { return _rowsDrawed == _height; });
 }
 
 Line Camera::generateRay(unsigned int x, unsigned int y) const {
@@ -89,57 +83,33 @@ color_t Camera::handleRay(unsigned int x, unsigned int y) const {
 }
 
 pixel* Camera::takePhoto() {
-    // Assure preparedness
-    _rowsDrawed = 0;
-#ifdef DEBUG
-    std::cout << "DRAWING READY" << std::endl;
-#endif
-    for (unsigned int y = 0; y < _height; ++y) {
-        std::lock_guard<std::mutex> lk(_queueMutex);
-        _freeRows.push(y);
-        _queueDrawCond.notify_one();
-    }
-    std::unique_lock<std::mutex> ck(_callerMutex);
-    _caller.wait(ck, [this] { return _rowsDrawed == _height; });
-#ifdef DEBUG
-    std::cout << std::endl << "==========" << std::endl;
-#endif
+    applyCommand(CameraCommands::DRAW);
     return _buffer;
 }
 
-void Camera::initHandler() {
-    while (!_execute) {
-        std::unique_lock<std::mutex> lk(_queueMutex);
-        _queueInitCond.wait(lk, [this] { return _execute || !_freeRows.empty(); });
-        if (_execute) {
-            break;
-        }
-        unsigned int y = _freeRows.front();
-        _freeRows.pop();
-        lk.unlock();
-        for (unsigned int x = 0; x < _width; ++x) {
-            _rays[y][x] = generateRay(x, y);
-        }
-        _rowsDrawed++;
-        _caller.notify_one();
+void Camera::applyCommand(Camera::CameraCommands cmd) {
+    _cn.set(0);
+    for (auto i = (unsigned int)(_evenFrame); i < _height; i += _jumpDist) {
+        _queue.enqueue(command_pair(cmd, i));
     }
+    _cn.await_for(_awaitFor);
+    _evenFrame = _interlace && (!_evenFrame);
 }
 
-void Camera::drawingHandler() {
-    while (!_execute) {
-        std::unique_lock<std::mutex> lk(_queueMutex);
-        _queueDrawCond.wait(lk, [this] { return _execute || !_freeRows.empty(); });
-        if (_execute) {
-            break;
-        }
-        unsigned int y = _freeRows.front();
-        _freeRows.pop();
-        lk.unlock();
+void Camera::threadHandler() {
+    while (true) {
+        command_pair cp = _queue.deque();
+        unsigned int y = cp.second;
         for (unsigned int x = 0; x < _width; ++x) {
-            color_t color = handleRay(x, y);
-            applyColor(_buffer, x, y, color);
+            switch (cp.first) {
+                case CameraCommands::GENERATE:
+                    _rays[y][x] = generateRay(x, y);
+                    break;
+                case CameraCommands::DRAW:
+                    applyColor(_buffer, x, y, handleRay(x, y));
+                    break;
+            }
         }
-        _rowsDrawed++;
-        _caller.notify_one();
+        ++_cn;
     }
 }

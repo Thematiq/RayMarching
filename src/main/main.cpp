@@ -37,7 +37,7 @@ int main() {
 
     std::cout << "Context prepared" << std::endl;
 
-    constexpr unsigned int TRIALS = 50;
+    constexpr unsigned int TRIALS = 10;
     unsigned int times[TRIALS];
     pixel* buffer;
 
@@ -47,7 +47,7 @@ int main() {
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
         time = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
     }
-    std::cout << "RENDERD STATISTICS FOR " << TRIALS << " TRIALS" << std::endl;
+    std::cout << "RENDER STATISTICS FOR " << TRIALS << " TRIALS" << std::endl;
     std::cout << "Min time (ms) " << *std::min_element(times, times+TRIALS) << std::endl;
     std::cout << "Max time (ms) " << *std::max_element(times, times+TRIALS) << std::endl;
     unsigned int total = 0;
