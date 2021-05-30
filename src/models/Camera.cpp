@@ -26,47 +26,43 @@ namespace RayMarching {
     }
 
     Camera::~Camera() {
-        for (unsigned int i = 0; i < _width; ++i) {
+        for (unsigned int i = 0; i < _settings.width; ++i) {
             free(_rays[i]);
         }
         delete[] _rays;
         delete[] _buffer;
     }
 
-    Camera::Camera(Vector3d localization, const Vector3d &direction, const Vector3d &up, double viewAngle, int width,
-                   int height, int threads, bool use_interlacing)
-            : _localization(std::move(localization)), _viewAngle(viewAngle), _width(width), _height(height),
-              _interlace(use_interlacing),
-              _jumpDist(use_interlacing ? 2 : 1), _evenFrame(false),
-              _totalThreads(threads < 0 ? std::thread::hardware_concurrency() : threads),
-              _awaitFor(use_interlacing ? height / 2 : height) {
-        if (use_interlacing && (height % 2 != 0)) {
+    Camera::Camera(const Vector3d &localization, const Vector3d &direction, const Vector3d &up, Settings_t set)
+            : _settings(set), _localization(localization), _jumpDist(set.interlace ? 2 : 1),
+              _evenFrame(false), _awaitFor(set.interlace ? set.height / 2 : set.height) {
+        if (_settings.interlace && (_settings.height % 2 != 0)) {
             throw std::invalid_argument("Height must be multiple of two for interlacing!");
         }
-        _buffer = new pixel[3 * width * height];
-        _drones = std::vector<std::thread>(_totalThreads);
+        _buffer = new pixel[3 * _settings.width * _settings.height];
+        _drones = std::vector<std::thread>(_settings.threads);
         _scene = std::make_shared<Scene>();
 
         _forward = (direction - localization).normalized();
         _upward = getPerpendicular(_forward, localization, up).normalized();
         _right = _forward.cross(_upward).normalized();
 
-        _rays = new Line *[_height];
-        for (unsigned int i = 0; i < _height; ++i) {
-            _rays[i] = (Line *) calloc(_width, sizeof(Line));
+        _rays = new Line *[_settings.height];
+        for (unsigned int i = 0; i < _settings.height; ++i) {
+            _rays[i] = (Line *) calloc(_settings.width, sizeof(Line));
         }
-        for (unsigned int i = 0; i < _totalThreads; ++i) {
-            _drones[i] = std::thread(&Camera::threadHandler, this);
+        for (auto &i : _drones) {
+            i = std::thread(&Camera::threadHandler, this);
         }
         applyCommand(CameraCommands::GENERATE);
-        if (_interlace) {
+        if (_settings.interlace) {
             applyCommand(CameraCommands::GENERATE);
         }
     }
 
     Line Camera::generateRay(unsigned int x, unsigned int y) const {
-        double angleHorizontal = (x - (double)(_width - 1) / 2) * _viewAngle / _width;
-        double angleVertical = (y - (double)(_height - 1) / 2) * _viewAngle / _width;
+        double angleHorizontal = (x - (double)(_settings.height - 1) / 2) * _settings.viewAngle / _settings.width;
+        double angleVertical = (y - (double)(_settings.height - 1) / 2) * _settings.viewAngle / _settings.width;
         Vector3d pixelPoint = _localization;
         pixelPoint = (_forward * (cos(angleHorizontal * HALF_CIRCLE) * cos(angleVertical * HALF_CIRCLE))) + pixelPoint;
         pixelPoint = (_right * (sin(angleHorizontal * HALF_CIRCLE) * cos(angleVertical * HALF_CIRCLE))) + pixelPoint;
@@ -101,7 +97,7 @@ namespace RayMarching {
             ray.moveBy(pair.first);
             if((_localization - ray.getVec()).norm() > MAX_DISTANCE){ break; }
         }
-        if(reflection > 0){ return  color; }
+        if (reflection > 0){ return  color; }
         return BACKGROUND;
     }
 
@@ -116,25 +112,25 @@ namespace RayMarching {
         _upward = getPerpendicular(_forward, _localization, up).normalized();
         _right = _forward.cross(_upward).normalized();
         applyCommand(CameraCommands::GENERATE);
-        if (_interlace) {
+        if (_settings.interlace) {
             applyCommand(CameraCommands::GENERATE);
         }
     }
 
     void Camera::applyCommand(Camera::CameraCommands cmd) {
         _cn.set(0);
-        for (auto i = (unsigned int) (_evenFrame); i < _height; i += _jumpDist) {
+        for (auto i = (unsigned int) (_evenFrame); i < _settings.height; i += _jumpDist) {
             _queue.enqueue(command_pair(cmd, i));
         }
         _cn.await_for(_awaitFor);
-        _evenFrame = _interlace && (!_evenFrame);
+        _evenFrame = _settings.interlace && (!_evenFrame);
     }
 
     void Camera::threadHandler() {
         while (true) {
             command_pair cp = _queue.deque();
             unsigned int y = cp.second;
-            for (unsigned int x = 0; x < _width; ++x) {
+            for (unsigned int x = 0; x < _settings.width; ++x) {
                 switch (cp.first) {
                     case CameraCommands::GENERATE:
                         _rays[y][x] = generateRay(x, y);

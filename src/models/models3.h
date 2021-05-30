@@ -14,7 +14,7 @@ namespace RayMarching {
         virtual ~SDFObject() = default;
         [[nodiscard]] virtual double getDist(Eigen::Vector3d const &p) const = 0;
         [[nodiscard]] virtual color_t getColor() const = 0;
-        [[nodiscard]] virtual Line getReflection(const Line& ray) const = 0;
+        [[nodiscard]] Line getReflection(const Line& ray) const;
     };
 
     class Shape : public SDFObject {
@@ -25,7 +25,6 @@ namespace RayMarching {
         explicit Shape(Eigen::Vector3d p) : _pos(std::move(p)) {};
         [[nodiscard]] virtual Eigen::Vector3d getPos() const { return _pos; };
         [[nodiscard]] color_t getColor() const override { return _color; }
-        [[nodiscard]] Line getReflection(const Line& ray) const override;;
         void setColor(color_t color){ _color = color; }
     };
 

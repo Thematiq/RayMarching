@@ -23,11 +23,13 @@ int main() {
     const auto loc = Vector3d(4, -3, 0);
     const auto dir = Vector3d(0, 0, 0);
     const auto up = Vector3d(0, 0, 3);
-    Camera camera = Camera(loc, dir, up, false);
+    Settings_t settings = Settings_t();
+    settings.interlace = false;
+    Camera camera = Camera(loc, dir, up, settings);
     std::shared_ptr<Scene> scene = camera.getScene();
 
 
-    Cube qube(Vector3d(0, -1, 0), 1);
+    Cube qube(Vector3d(0, -1, 0),   1);
     qube.setColor(GREEN);
     scene->pushShape(&qube);
     Sphere sphere(Vector3d(0, -2, 0), 1);

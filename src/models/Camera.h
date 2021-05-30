@@ -9,7 +9,9 @@
 #include "algebra.h"
 #include "syncqueue.h"
 #include "controlnum.h"
+#include "settings.h"
 #include <thread>
+#include <utility>
 #include <vector>
 #include <Eigen/Dense>
 
@@ -32,13 +34,9 @@ namespace RayMarching {
         const static color_t BACKGROUND; /**< Default background color */
     private:
         using command_pair = std::pair<Camera::CameraCommands, unsigned int>;
-        const double _viewAngle;
-        const unsigned int _width;
-        const unsigned int _height;
+        const Settings_t _settings;
         const unsigned int _awaitFor;
         const unsigned int _jumpDist;
-        const unsigned int _totalThreads;
-        const bool _interlace;
         bool _terminate = false;
         bool _evenFrame;
         pixel *_buffer;
@@ -54,42 +52,22 @@ namespace RayMarching {
 
     public:
         /**
-         * Spawns new camera
-         * @param localization Vector describing Camera position point
-         * @param direction Vector representing point at which Camera looks at
-         * @param up Vector describing where is the *up* for the camera
-         * @param use_interlacing Whether to use interlacing (https://en.wikipedia.org/wiki/Interlaced_video)
+         * Creates new Camera with default settings
+         * @param localization Vector3d representing Camera position in the space
+         * @param direction Vector3d representing Point at which Camera looks
+         * @param up Vector3d representing normal vector for Camera horizontal plane
          */
-        Camera(const Eigen::Vector3d &localization, const Eigen::Vector3d &direction, const Eigen::Vector3d &up,
-               bool use_interlacing = false)
-                : Camera(localization, direction, up, -1, use_interlacing) {}
+        Camera(const Eigen::Vector3d &localization, const Eigen::Vector3d &direction, const Eigen::Vector3d &up)
+            : Camera(localization, direction, up, Settings_t()) {}
 
         /**
-         * Spawns new camera with given number of threads
-         * @param localization Vector describing Camera position point
-         * @param direction Vector representing point at which Camera looks at
-         * @param up Vector describing where is the *up* for the camera
-         * @param threads number of threads used in the rendering. If threads is negative integer, std::thread::hardware_concurrency is used
-         * @param use_interlacing Whether to use interlacing (https://en.wikipedia.org/wiki/Interlaced_video)
+         * Creates new Camera object
+         * @param localization Vector3d representing Camera position in the space
+         * @param direction Vector3d representing Point at which Camera looks
+         * @param up Vector3d representing normal vector for Camera horizontal plane
+         * @param set Settings_t structure defining parameters
          */
-        Camera(const Eigen::Vector3d &localization, const Eigen::Vector3d &direction, const Eigen::Vector3d &up,
-               int threads, bool use_interlacing = false)
-                : Camera(localization, direction, up, VIEW_ANGLE, WIDTH, HEIGHT, threads, use_interlacing) {}
-
-        /**
-         *
-         * Spawns new camera with given number of threads
-         * @param localization Vector describing Camera position point
-         * @param direction Vector representing point at which Camera looks at
-         * @param up Vector describing where is the *up* for the camera
-         * @param viewAngle view angle
-         * @param width Canvas width
-         * @param height Canvas height
-         * @param threads number of threads used in the rendering. If threads is negative integer, std::thread::hardware_concurrency is used
-         * @param use_interlacing Whether to use interlacing (https://en.wikipedia.org/wiki/Interlaced_video)
-         */
-        Camera(Eigen::Vector3d localization, const Eigen::Vector3d &direction, const Eigen::Vector3d &up,
-               double viewAngle, int width, int height, int thread, bool use_interlacing);
+        Camera(const Eigen::Vector3d &localization, const Eigen::Vector3d &direction, const Eigen::Vector3d &up, Settings_t set);
 
         /**
          * Camera destructor
@@ -108,16 +86,42 @@ namespace RayMarching {
          */
         pixel *takePhoto();
 
+        /**
+         * Moves Camera to a new position
+         * @param localization Vector3d representing Camera position in the space
+         * @param direction Vector3d representing Point at which Camera looks
+         * @param up Vector3d representing normal vector for Camera horizontal plane
+         */
         void setCamera(const Eigen::Vector3d &localization, const Eigen::Vector3d &direction, const Eigen::Vector3d &up);
 
     private:
 
+        /**
+         * Function handling _drones threads work
+         */
         [[noreturn]] void threadHandler();
 
+        /**
+         * Generates new Line based on a pixel position
+         * @param x X pixel coordinate (left to right)
+         * @param y Y pixel coordinate (top to bottom
+         * @return Line representing pixel's ray
+         */
         [[nodiscard]] Line generateRay(unsigned int x, unsigned int y) const;
 
+        /**
+         * Generates pixel's color based on a provided ray. Additional parameters are used for the recursion
+         * @param ray Pixel's Line
+         * @param color Last reflection color (used for recursion)
+         * @param reflection No reflection (used for recursion)
+         * @return Color for a given ray
+         */
         [[nodiscard]] color_t handleRay(Line& ray, color_t color = BLACK, unsigned int reflection = 0) const;
     protected:
+        /**
+         * Sends command to the render threads and awaits for the synchronization
+         * @param cmd CameraCommands command
+         */
         void applyCommand(Camera::CameraCommands cmd);
     };
 }
