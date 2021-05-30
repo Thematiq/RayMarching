@@ -4,21 +4,22 @@
 #include <cmath>
 #include "colors.h"
 #include "algebra.h"
+#include <Eigen/Dense>
 
 class SDFObject {
 public:
     virtual ~SDFObject() = default;
-    virtual double getDist(Point3 const &p) const = 0;
+    virtual double getDist(Eigen::Vector3d const &p) const = 0;
     virtual color_t getColor() const = 0;
 };
 
 class Shape : public SDFObject {
 protected:
-    Point3 _pos = Point3();
+    Eigen::Vector3d _pos;
     color_t _color = BLACK;
 public:
-    explicit Shape(Point3 p) : _pos(p) {};
-    [[nodiscard]] virtual Point3 getPos() const { return _pos; };
+    explicit Shape(Eigen::Vector3d p) : _pos(std::move(p)) {};
+    [[nodiscard]] virtual Eigen::Vector3d getPos() const { return _pos; };
     [[nodiscard]] color_t getColor() const override { return _color; }
     void setColor(color_t color){ _color = color; }
 };
@@ -27,18 +28,18 @@ class Sphere : public Shape {
 private:
     double _radius;
 public:
-    explicit Sphere(Point3 p, double r = 0) : Shape(p), _radius(r) {};
-    [[nodiscard]] double getDist(const Point3 &p) const override;
+    explicit Sphere(Eigen::Vector3d p, double r = 0) : Shape(std::move(p)), _radius(r) {};
+    [[nodiscard]] double getDist(const Eigen::Vector3d &p) const override;
     [[nodiscard]] double getRadius() const { return _radius; }
 };
 
 class Cube : public Shape {
 private:
-    Point3 _bound;
+    Eigen::Vector3d _bound;
 public:
-    explicit Cube(Point3 p, Point3 bound) : Shape(p), _bound(bound) {};
-    [[nodiscard]] double getDist(const Point3 &p) const override;
-    [[nodiscard]] Point3 getBound() const { return _bound; }
+    explicit Cube(Eigen::Vector3d p, double bound) : Shape(std::move(p)), _bound(bound, bound, bound) {};
+    [[nodiscard]] double getDist(const Eigen::Vector3d &p) const override;
+    [[nodiscard]] double getBound() const { return _bound.x(); }
 };
 
 #endif //RAYMARCHING_MODELS3_H

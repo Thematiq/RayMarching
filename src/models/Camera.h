@@ -7,34 +7,41 @@
 #include "models3.h"
 #include "const.h"
 #include "algebra.h"
+#include "syncqueue.h"
+#include "controlnum.h"
 #include <thread>
 #include <vector>
-#include <condition_variable>
+#include <Eigen/Dense>
 
 using pixel = unsigned char;
 
 class Camera {
 private:
+    enum class CameraCommands {
+        GENERATE,
+        DRAW
+    };
+    using command_pair = std::pair<Camera::CameraCommands, unsigned int>;
     const static color_t BACKGROUND;
     const double _viewAngle;
-    const int _width;
-    const int _height;
-    const bool _interlacing;
+    const unsigned int _width;
+    const unsigned int _height;
+    const unsigned int _awaitFor;
+    const unsigned int _jumpDist;
     const unsigned int _totalThreads;
+    const bool _interlace;
     bool _terminate = false;
-    int _threadsReady = 0;
+    bool _evenFrame;
     pixel* _buffer;
-    Point3 _localization;
-    Vector _forward;
-    Vector _upward;
-    Vector _right;
+    Eigen::Vector3d _localization;
+    Eigen::Vector3d _forward;
+    Eigen::Vector3d _upward;
+    Eigen::Vector3d _right;
     Line** _rays;
-    std::vector<std::thread> _controller;
-    std::condition_variable _caller;
-    std::mutex _safety;
-    std::condition_variable _returner;
-    std::mutex _pickup;
     std::shared_ptr<Scene> _scene;
+    std::vector<std::thread> _drones;
+    SyncQueue<command_pair> _queue;
+    ControlNum _cn;
 
 public:
     /**
@@ -47,17 +54,18 @@ public:
      * @param height
      * @param thread - number of threads, if < 0 then uses all available hardware threads
      */
-    Camera(Point3 localization, Point3 direction, Point3 up, bool use_interlacing = false)
+    Camera(const Eigen::Vector3d &localization, const Eigen::Vector3d &direction, const Eigen::Vector3d &up, bool use_interlacing = false)
     : Camera(localization, direction, up, -1, use_interlacing) {}
-    Camera(Point3 localization, Point3 direction, Point3 up, int threads, bool use_interlacing = false)
+    Camera(const Eigen::Vector3d &localization, const Eigen::Vector3d &direction, const Eigen::Vector3d &up, int threads, bool use_interlacing = false)
     : Camera(localization, direction, up, VIEW_ANGLE, WIDTH, HEIGHT, threads, use_interlacing) {}
-    Camera(Point3 localization, Point3 direction, Point3 up, double viewAngle, int width, int height, int thread, bool use_interlacing);
+    Camera(Eigen::Vector3d localization, const Eigen::Vector3d& direction, const Eigen::Vector3d& up, double viewAngle, int width, int height, int thread, bool use_interlacing);
     ~Camera();
     std::shared_ptr<Scene> getScene(){ return _scene;}
     pixel* takePhoto();
 
 private:
-    [[noreturn]] void threadHandler(unsigned int thread_id, bool use_interlacing = false);
+    void applyCommand(Camera::CameraCommands cmd);
+    [[noreturn]] void threadHandler();
     [[nodiscard]] Line generateRay(unsigned int x, unsigned int y) const;
     [[nodiscard]] color_t handleRay(unsigned int x, unsigned int y) const;
 };

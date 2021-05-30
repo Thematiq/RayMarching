@@ -2,6 +2,7 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 
+using namespace Eigen;
 using json = nlohmann::json;
 
 Scene::~Scene() {
@@ -19,7 +20,7 @@ Scene Scene::getFromFile(const std::string& filename) {
         Shape *temp = nullptr;
         if (std::string(arr["Type"]) == "Sphere") {
             temp = new Sphere(
-                    Point3(
+                    Vector3d(
                             (float) arr["Pos"]["x"],
                             (float) arr["Pos"]["y"],
                             (float) arr["Pos"]["z"]),
@@ -31,7 +32,7 @@ Scene Scene::getFromFile(const std::string& filename) {
     return ret;
 }
 
-shapeDist Scene::signedPairFunction(const Point3 &p) const {
+shapeDist Scene::signedPairFunction(const Vector3d &p) const {
     shapeDist ret = {DBL_MAX, nullptr};
     for (auto &member : _content) {
         double dst = member->getDist(p);
@@ -43,11 +44,11 @@ shapeDist Scene::signedPairFunction(const Point3 &p) const {
     return ret;
 }
 
-SDFObject* Scene::signedShapeFunction(const Point3 &p) const {
+SDFObject* Scene::signedShapeFunction(const Vector3d &p) const {
     return signedPairFunction(p).second;
 }
 
-double Scene::signedDistFunction(const Point3 &p) const {
+double Scene::signedDistFunction(const Vector3d &p) const {
     return signedPairFunction(p).first;
 }
 
