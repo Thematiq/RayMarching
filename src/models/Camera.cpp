@@ -8,15 +8,15 @@ namespace RayMarching {
 
 // Assuming consts
     inline
-    unsigned int posToBuf(const unsigned int &x, const unsigned int &y) {
-        return 3 * (x + WIDTH * y);
+    unsigned int posToBuf(const unsigned int &x, const unsigned int &y, Settings_t set) {
+        return 3 * (x + set.width * y);
     }
 
     inline
-    void applyColor(pixel *buffer, const unsigned int &x, const unsigned int &y, const color_t &c) {
-        buffer[posToBuf(x, y)] = c.R;
-        buffer[posToBuf(x, y) + 1] = c.G;
-        buffer[posToBuf(x, y) + 2] = c.B;
+    void Camera::applyColor(const unsigned int &x, const unsigned int &y, const color_t &c) {
+        _buffer[posToBuf(x, y, _settings)] = c.R;
+        _buffer[posToBuf(x, y, _settings) + 1] = c.G;
+        _buffer[posToBuf(x, y, _settings) + 2] = c.B;
     }
 
     inline
@@ -80,11 +80,12 @@ namespace RayMarching {
 
             if(pair.first < EPSILON){
                 Line reflected_ray = pair.second->getReflection(ray);
+                color_t current_col = pair.second->getColor(ray.getVec());
                 double factor = (1.5 - 0.5 *ray.getDirection().dot(reflected_ray.getDirection()) /
                                      (ray.getDirection().norm() * reflected_ray.getDirection().norm())) / 2;
-                color.R = (pixel)((1 - factor) * color.R + factor * pair.second->getColor().R);
-                color.G = (pixel)((1 - factor) * color.G + factor * pair.second->getColor().G);
-                color.B = (pixel)((1 - factor) * color.B + factor * pair.second->getColor().B);
+                color.R = (pixel)((1 - factor) * color.R + factor * current_col.R);
+                color.G = (pixel)((1 - factor) * color.G + factor * current_col.G);
+                color.B = (pixel)((1 - factor) * color.B + factor * current_col.B);
 
                 if(reflection == MAX_REFLECTIONS){
                     return color;
@@ -136,7 +137,7 @@ namespace RayMarching {
                         _rays[y][x] = generateRay(x, y);
                         break;
                     case CameraCommands::DRAW:
-                        applyColor(_buffer, x, y, handleRay(_rays[y][x]));
+                        applyColor(x, y, handleRay(_rays[y][x]));
                         break;
                 }
             }

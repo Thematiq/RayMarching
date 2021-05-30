@@ -75,30 +75,162 @@ $(function() {
 <div class="title">RayMarching::SDFObject Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Virtual class describing abstract shapes.  
+ <a href="classRayMarching_1_1SDFObject.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="models3_8h_source.html">models3.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for RayMarching::SDFObject:</div>
 <div class="dyncontent">
  <div class="center">
   <img src="classRayMarching_1_1SDFObject.png" usemap="#RayMarching::SDFObject_map" alt=""/>
   <map id="RayMarching::SDFObject_map" name="RayMarching::SDFObject_map">
-<area href="classRayMarching_1_1Shape.html" alt="RayMarching::Shape" shape="rect" coords="83,56,239,80"/>
-<area href="classRayMarching_1_1Cube.html" alt="RayMarching::Cube" shape="rect" coords="0,112,156,136"/>
-<area href="classRayMarching_1_1Sphere.html" alt="RayMarching::Sphere" shape="rect" coords="166,112,322,136"/>
+<area href="classRayMarching_1_1SDFCombination.html" title="SDFObject combining two elements." alt="RayMarching::SDFCombination" shape="rect" coords="0,56,188,80"/>
+<area href="classRayMarching_1_1Shape.html" alt="RayMarching::Shape" shape="rect" coords="198,56,386,80"/>
+<area href="classRayMarching_1_1Cube.html" alt="RayMarching::Cube" shape="rect" coords="0,112,188,136"/>
+<area href="classRayMarching_1_1Cylinder.html" alt="RayMarching::Cylinder" shape="rect" coords="198,112,386,136"/>
+<area href="classRayMarching_1_1Sphere.html" alt="RayMarching::Sphere" shape="rect" coords="396,112,584,136"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a739d124b4c9f393aed38e8faeee49504"><td class="memItemLeft" align="right" valign="top"><a id="a739d124b4c9f393aed38e8faeee49504"></a>
-virtual double&#160;</td><td class="memItemRight" valign="bottom"><b>getDist</b> (Eigen::Vector3d const &amp;p) const =0</td></tr>
+<tr class="memitem:a40e54e7d23ba04c4f6edfc3840f77f09"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRayMarching_1_1SDFObject.html#a40e54e7d23ba04c4f6edfc3840f77f09">~SDFObject</a> ()=default</td></tr>
+<tr class="separator:a40e54e7d23ba04c4f6edfc3840f77f09"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a739d124b4c9f393aed38e8faeee49504"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRayMarching_1_1SDFObject.html#a739d124b4c9f393aed38e8faeee49504">getDist</a> (Eigen::Vector3d const &amp;p) const =0</td></tr>
 <tr class="separator:a739d124b4c9f393aed38e8faeee49504"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab3fb8675b03978564c950b10d55b97f6"><td class="memItemLeft" align="right" valign="top"><a id="ab3fb8675b03978564c950b10d55b97f6"></a>
-virtual <a class="el" href="structRayMarching_1_1color__t.html">color_t</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getColor</b> () const =0</td></tr>
-<tr class="separator:ab3fb8675b03978564c950b10d55b97f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5093c9a1941d02e0eefb57a287563762"><td class="memItemLeft" align="right" valign="top"><a id="a5093c9a1941d02e0eefb57a287563762"></a>
-<a class="el" href="classRayMarching_1_1Line.html">Line</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getReflection</b> (const <a class="el" href="classRayMarching_1_1Line.html">Line</a> &amp;ray) const</td></tr>
+<tr class="memitem:a27d6cde03fbdd893c348e851411b2f71"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="structRayMarching_1_1color.html">color_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRayMarching_1_1SDFObject.html#a27d6cde03fbdd893c348e851411b2f71">getColor</a> (Eigen::Vector3d const &amp;p) const =0</td></tr>
+<tr class="separator:a27d6cde03fbdd893c348e851411b2f71"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5093c9a1941d02e0eefb57a287563762"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classRayMarching_1_1Line.html">Line</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRayMarching_1_1SDFObject.html#a5093c9a1941d02e0eefb57a287563762">getReflection</a> (const <a class="el" href="classRayMarching_1_1Line.html">Line</a> &amp;ray) const</td></tr>
 <tr class="separator:a5093c9a1941d02e0eefb57a287563762"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Virtual class describing abstract shapes. </p>
+<p>Interface defining required behavior for the <a class="el" href="classRayMarching_1_1Shape.html">Shape</a> implementation </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a40e54e7d23ba04c4f6edfc3840f77f09"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a40e54e7d23ba04c4f6edfc3840f77f09">&#9670;&nbsp;</a></span>~SDFObject()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual RayMarching::SDFObject::~SDFObject </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Virtual destructor for the inheritance safety </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a27d6cde03fbdd893c348e851411b2f71"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a27d6cde03fbdd893c348e851411b2f71">&#9670;&nbsp;</a></span>getColor()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="el" href="structRayMarching_1_1color.html">color_t</a> RayMarching::SDFObject::getColor </td>
+          <td>(</td>
+          <td class="paramtype">Eigen::Vector3d const &amp;&#160;</td>
+          <td class="paramname"><em>p</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Returns closest color from the given position </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">p</td><td>Requesting point </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>color_t structure </dd></dl>
+
+<p>Implemented in <a class="el" href="classRayMarching_1_1Shape.html#a670626cce76ed7172e01b9f57e89f947">RayMarching::Shape</a>, and <a class="el" href="classRayMarching_1_1SDFCombination.html#a3448c95a5337b6e3a84632f63913e228">RayMarching::SDFCombination</a>.</p>
+
+</div>
+</div>
+<a id="a739d124b4c9f393aed38e8faeee49504"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a739d124b4c9f393aed38e8faeee49504">&#9670;&nbsp;</a></span>getDist()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual double RayMarching::SDFObject::getDist </td>
+          <td>(</td>
+          <td class="paramtype">Eigen::Vector3d const &amp;&#160;</td>
+          <td class="paramname"><em>p</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>SDF function for the <a class="el" href="classRayMarching_1_1SDFObject.html" title="Virtual class describing abstract shapes.">SDFObject</a> </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">p</td><td>Requesting point </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>signed distance from the object </dd></dl>
+
+<p>Implemented in <a class="el" href="classRayMarching_1_1Cylinder.html#a7bcc40fde7a42bc484fc07202d46d0d0">RayMarching::Cylinder</a>, <a class="el" href="classRayMarching_1_1Cube.html#afa2fba8bc3abb110960cacf82e991a23">RayMarching::Cube</a>, <a class="el" href="classRayMarching_1_1Sphere.html#a94d6ba90fba0089b842afd0e8c8fa1d2">RayMarching::Sphere</a>, and <a class="el" href="classRayMarching_1_1SDFCombination.html#ac268c60bd3a202bf4c90f0e7974c0412">RayMarching::SDFCombination</a>.</p>
+
+</div>
+</div>
+<a id="a5093c9a1941d02e0eefb57a287563762"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5093c9a1941d02e0eefb57a287563762">&#9670;&nbsp;</a></span>getReflection()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classRayMarching_1_1Line.html">Line</a> RayMarching::SDFObject::getReflection </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classRayMarching_1_1Line.html">Line</a> &amp;&#160;</td>
+          <td class="paramname"><em>ray</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Returns reflected ray from the object </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ray</td><td><a class="el" href="classRayMarching_1_1Line.html" title="Marching Ray implementation.">Line</a> pointing from the object </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Reflected <a class="el" href="classRayMarching_1_1Line.html" title="Marching Ray implementation.">Line</a> </dd></dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/models/<a class="el" href="models3_8h_source.html">models3.h</a></li>
 <li>src/models/models3.cpp</li>

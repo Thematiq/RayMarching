@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <chrono>
 #include <algorithm>
+#include <memory>
 
 #include "Camera.h"
 #include "const.h"
@@ -11,8 +12,20 @@ using namespace Eigen;
 using namespace RayMarching;
 
 int main() {
+
+
+    const auto loc = Vector3d(4, -3, 0);
+    const auto dir = Vector3d(0, 0, 0);
+    const auto up = Vector3d(0, 0, 3);
+    Settings_t settings = Settings_t();
+    settings.interlace = true;
+    settings.width = 640;
+    settings.height = 480;
+    Camera camera = Camera(loc, dir, up, settings);
+    std::shared_ptr<Scene> scene = camera.getScene();
+
     glfwInit();
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "RayMarching", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(settings.width, settings.height, "RayMarching", nullptr, nullptr);
     if (window == nullptr) {
         std::cout << "Could not open window";
         glfwTerminate();
@@ -20,24 +33,18 @@ int main() {
     }
 
 
-    const auto loc = Vector3d(4, -3, 0);
-    const auto dir = Vector3d(0, 0, 0);
-    const auto up = Vector3d(0, 0, 3);
-    Settings_t settings = Settings_t();
-    settings.interlace = false;
-    Camera camera = Camera(loc, dir, up, settings);
-    std::shared_ptr<Scene> scene = camera.getScene();
-
-
-    Cube qube(Vector3d(0, -1, 0),   1);
-    qube.setColor(GREEN);
-    scene->pushShape(&qube);
-    Sphere sphere(Vector3d(0, -2, 0), 1);
-    sphere.setColor(BLUE);
-    scene->pushShape(&sphere);
-    Sphere sphere1(Vector3d(0, 2, 0), 1);
-    sphere1.setColor(RED);
-    scene->pushShape(&sphere1);
+//    Cube qube(Vector3d(0, 0, 0),   1, GREEN);
+//    scene->pushShape(&qube);
+//    Sphere sphere(Vector3d(0, 0, 0), 1, BLUE);
+//    scene->pushShape(&sphere);
+//    Sphere sphere1(Vector3d(0, 2, 0), 1, RED);
+//    scene->pushShape(&sphere1);
+    std::unique_ptr<SDFObject> q( new Cube(Vector3d(0, -1, 0), 1, RED));
+    std::unique_ptr<SDFObject> s(new Sphere(Vector3d(0, -1, 0), 1.4, BLUE));
+    std::unique_ptr<SDFObject> c(new Cylinder(Vector3d(0, -1, 0), 1, 1.4, GREEN));
+    std::unique_ptr<SDFObject> u(new SDFCombination(std::move(q), std::move(s), SDFCombination::SDFOperation::INTERSECTION));
+    SDFCombination t(std::move(u), std::move(c), SDFCombination::SDFOperation::DIFFERENCE);
+    scene->pushShape(&t);
 
     std::cout << "Context prepared" << std::endl;
 
@@ -63,12 +70,12 @@ int main() {
 
 
     glfwMakeContextCurrent(window);
-    glViewport(0, 0, WIDTH, HEIGHT);
+    glViewport(0, 0, settings.width, settings.height);
 
     double angle = 0;
     while (!glfwWindowShouldClose(window)) {
         buffer = camera.takePhoto();
-        glDrawPixels(WIDTH, HEIGHT, GL_RGB, GL_UNSIGNED_BYTE, buffer);
+        glDrawPixels(settings.width, settings.height, GL_RGB, GL_UNSIGNED_BYTE, buffer);
 
         glfwPollEvents();
         glfwSwapBuffers(window);

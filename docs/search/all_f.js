@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['width_39',['width',['../structRayMarching_1_1Settings.html#aba9fd8b24ad7e810be98767912aa0e49',1,'RayMarching::Settings']]]
+  ['viewangle_48',['viewAngle',['../structRayMarching_1_1Settings.html#ac2cc7b6b0576c63017cf2ee2c772850d',1,'RayMarching::Settings']]]
 ];

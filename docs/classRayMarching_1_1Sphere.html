@@ -82,37 +82,36 @@ Inheritance diagram for RayMarching::Sphere:</div>
   <img src="classRayMarching_1_1Sphere.png" usemap="#RayMarching::Sphere_map" alt=""/>
   <map id="RayMarching::Sphere_map" name="RayMarching::Sphere_map">
 <area href="classRayMarching_1_1Shape.html" alt="RayMarching::Shape" shape="rect" coords="0,56,156,80"/>
-<area href="classRayMarching_1_1SDFObject.html" alt="RayMarching::SDFObject" shape="rect" coords="0,0,156,24"/>
+<area href="classRayMarching_1_1SDFObject.html" title="Virtual class describing abstract shapes." alt="RayMarching::SDFObject" shape="rect" coords="0,0,156,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a65019cf549f8ddfbb11a2ff1527ff18d"><td class="memItemLeft" align="right" valign="top"><a id="a65019cf549f8ddfbb11a2ff1527ff18d"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Sphere</b> (Eigen::Vector3d p, double r=0)</td></tr>
-<tr class="separator:a65019cf549f8ddfbb11a2ff1527ff18d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a94d6ba90fba0089b842afd0e8c8fa1d2"><td class="memItemLeft" align="right" valign="top"><a id="a94d6ba90fba0089b842afd0e8c8fa1d2"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>getDist</b> (const Eigen::Vector3d &amp;p) const override</td></tr>
+<tr class="memitem:ac3ff58ee1390e63fbe069f188faafed3"><td class="memItemLeft" align="right" valign="top"><a id="ac3ff58ee1390e63fbe069f188faafed3"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Sphere</b> (Eigen::Vector3d p, double r=0, <a class="el" href="structRayMarching_1_1color.html">color_t</a> <a class="el" href="structRayMarching_1_1color.html">color</a>=BLACK)</td></tr>
+<tr class="separator:ac3ff58ee1390e63fbe069f188faafed3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94d6ba90fba0089b842afd0e8c8fa1d2"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRayMarching_1_1Sphere.html#a94d6ba90fba0089b842afd0e8c8fa1d2">getDist</a> (const Eigen::Vector3d &amp;p) const override</td></tr>
 <tr class="separator:a94d6ba90fba0089b842afd0e8c8fa1d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af18dfcc538a1c37f39742e9f4ee23c8e"><td class="memItemLeft" align="right" valign="top"><a id="af18dfcc538a1c37f39742e9f4ee23c8e"></a>
 double&#160;</td><td class="memItemRight" valign="bottom"><b>getRadius</b> () const</td></tr>
 <tr class="separator:af18dfcc538a1c37f39742e9f4ee23c8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classRayMarching_1_1Shape"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classRayMarching_1_1Shape')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classRayMarching_1_1Shape.html">RayMarching::Shape</a></td></tr>
-<tr class="memitem:a781444520d995860afccecc62b344bd8 inherit pub_methods_classRayMarching_1_1Shape"><td class="memItemLeft" align="right" valign="top"><a id="a781444520d995860afccecc62b344bd8"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Shape</b> (Eigen::Vector3d p)</td></tr>
-<tr class="separator:a781444520d995860afccecc62b344bd8 inherit pub_methods_classRayMarching_1_1Shape"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2659cde38b2de4c2ee22b438d653a30f inherit pub_methods_classRayMarching_1_1Shape"><td class="memItemLeft" align="right" valign="top"><a id="a2659cde38b2de4c2ee22b438d653a30f"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Shape</b> (Eigen::Vector3d p, <a class="el" href="structRayMarching_1_1color.html">color_t</a> <a class="el" href="structRayMarching_1_1color.html">color</a>=BLACK)</td></tr>
+<tr class="separator:a2659cde38b2de4c2ee22b438d653a30f inherit pub_methods_classRayMarching_1_1Shape"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a066319ab5d175e7f7adbd4e85b76eea1 inherit pub_methods_classRayMarching_1_1Shape"><td class="memItemLeft" align="right" valign="top"><a id="a066319ab5d175e7f7adbd4e85b76eea1"></a>
 virtual Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>getPos</b> () const</td></tr>
 <tr class="separator:a066319ab5d175e7f7adbd4e85b76eea1 inherit pub_methods_classRayMarching_1_1Shape"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a24801aa46d2d9fc8adf680c288e17250 inherit pub_methods_classRayMarching_1_1Shape"><td class="memItemLeft" align="right" valign="top"><a id="a24801aa46d2d9fc8adf680c288e17250"></a>
-<a class="el" href="structRayMarching_1_1color__t.html">color_t</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getColor</b> () const override</td></tr>
-<tr class="separator:a24801aa46d2d9fc8adf680c288e17250 inherit pub_methods_classRayMarching_1_1Shape"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a670626cce76ed7172e01b9f57e89f947 inherit pub_methods_classRayMarching_1_1Shape"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structRayMarching_1_1color.html">color_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRayMarching_1_1Shape.html#a670626cce76ed7172e01b9f57e89f947">getColor</a> (const Eigen::Vector3d &amp;p) const override</td></tr>
+<tr class="separator:a670626cce76ed7172e01b9f57e89f947 inherit pub_methods_classRayMarching_1_1Shape"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afefdf9a8b5453a020f1d468081b1da21 inherit pub_methods_classRayMarching_1_1Shape"><td class="memItemLeft" align="right" valign="top"><a id="afefdf9a8b5453a020f1d468081b1da21"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setColor</b> (<a class="el" href="structRayMarching_1_1color__t.html">color_t</a> color)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setColor</b> (<a class="el" href="structRayMarching_1_1color.html">color_t</a> <a class="el" href="structRayMarching_1_1color.html">color</a>)</td></tr>
 <tr class="separator:afefdf9a8b5453a020f1d468081b1da21 inherit pub_methods_classRayMarching_1_1Shape"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classRayMarching_1_1SDFObject"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classRayMarching_1_1SDFObject')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classRayMarching_1_1SDFObject.html">RayMarching::SDFObject</a></td></tr>
-<tr class="memitem:a5093c9a1941d02e0eefb57a287563762 inherit pub_methods_classRayMarching_1_1SDFObject"><td class="memItemLeft" align="right" valign="top"><a id="a5093c9a1941d02e0eefb57a287563762"></a>
-<a class="el" href="classRayMarching_1_1Line.html">Line</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getReflection</b> (const <a class="el" href="classRayMarching_1_1Line.html">Line</a> &amp;ray) const</td></tr>
+<tr class="memitem:a40e54e7d23ba04c4f6edfc3840f77f09 inherit pub_methods_classRayMarching_1_1SDFObject"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRayMarching_1_1SDFObject.html#a40e54e7d23ba04c4f6edfc3840f77f09">~SDFObject</a> ()=default</td></tr>
+<tr class="separator:a40e54e7d23ba04c4f6edfc3840f77f09 inherit pub_methods_classRayMarching_1_1SDFObject"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5093c9a1941d02e0eefb57a287563762 inherit pub_methods_classRayMarching_1_1SDFObject"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classRayMarching_1_1Line.html">Line</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRayMarching_1_1SDFObject.html#a5093c9a1941d02e0eefb57a287563762">getReflection</a> (const <a class="el" href="classRayMarching_1_1Line.html">Line</a> &amp;ray) const</td></tr>
 <tr class="separator:a5093c9a1941d02e0eefb57a287563762 inherit pub_methods_classRayMarching_1_1SDFObject"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
@@ -122,9 +121,45 @@ Additional Inherited Members</h2></td></tr>
 Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>_pos</b></td></tr>
 <tr class="separator:aac47cc648ed714afbe626a8757f98542 inherit pro_attribs_classRayMarching_1_1Shape"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a41adf73693c7f228d75f3e7bdc040948 inherit pro_attribs_classRayMarching_1_1Shape"><td class="memItemLeft" align="right" valign="top"><a id="a41adf73693c7f228d75f3e7bdc040948"></a>
-<a class="el" href="structRayMarching_1_1color__t.html">color_t</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_color</b> = BLACK</td></tr>
+<a class="el" href="structRayMarching_1_1color.html">color_t</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_color</b></td></tr>
 <tr class="separator:a41adf73693c7f228d75f3e7bdc040948 inherit pro_attribs_classRayMarching_1_1Shape"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a94d6ba90fba0089b842afd0e8c8fa1d2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a94d6ba90fba0089b842afd0e8c8fa1d2">&#9670;&nbsp;</a></span>getDist()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double RayMarching::Sphere::getDist </td>
+          <td>(</td>
+          <td class="paramtype">const Eigen::Vector3d &amp;&#160;</td>
+          <td class="paramname"><em>p</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>SDF function for the <a class="el" href="classRayMarching_1_1SDFObject.html" title="Virtual class describing abstract shapes.">SDFObject</a> </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">p</td><td>Requesting point </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>signed distance from the object </dd></dl>
+
+<p>Implements <a class="el" href="classRayMarching_1_1SDFObject.html#a739d124b4c9f393aed38e8faeee49504">RayMarching::SDFObject</a>.</p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/models/<a class="el" href="models3_8h_source.html">models3.h</a></li>
 <li>src/models/models3.cpp</li>

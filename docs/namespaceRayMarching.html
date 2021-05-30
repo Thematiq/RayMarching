@@ -85,15 +85,21 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRayMarching_1_1Camera.html">Camera</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class representing camera object.  <a href="classRayMarching_1_1Camera.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRayMarching_1_1color__t.html">color_t</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRayMarching_1_1color.html">color</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRayMarching_1_1SDFObject.html">SDFObject</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual class describing abstract shapes.  <a href="classRayMarching_1_1SDFObject.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRayMarching_1_1SDFCombination.html">SDFCombination</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classRayMarching_1_1SDFObject.html" title="Virtual class describing abstract shapes.">SDFObject</a> combining two elements.  <a href="classRayMarching_1_1SDFCombination.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRayMarching_1_1Shape.html">Shape</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRayMarching_1_1Sphere.html">Sphere</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRayMarching_1_1Cube.html">Cube</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRayMarching_1_1Cylinder.html">Cylinder</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRayMarching_1_1Scene.html">Scene</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -112,6 +118,9 @@ Typedefs</h2></td></tr>
 <tr class="memitem:abe946a56cdfc7f51d8d5df106427aed1"><td class="memItemLeft" align="right" valign="top"><a id="abe946a56cdfc7f51d8d5df106427aed1"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>pixel</b> = unsigned char</td></tr>
 <tr class="separator:abe946a56cdfc7f51d8d5df106427aed1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3cd4d3cd8b300feff246e24e634c79a3"><td class="memItemLeft" align="right" valign="top"><a id="a3cd4d3cd8b300feff246e24e634c79a3"></a>
+typedef struct <a class="el" href="structRayMarching_1_1color.html">RayMarching::color</a>&#160;</td><td class="memItemRight" valign="bottom"><b>color_t</b></td></tr>
+<tr class="separator:a3cd4d3cd8b300feff246e24e634c79a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac07c261d4487804e113e0293f8be07b5"><td class="memItemLeft" align="right" valign="top"><a id="ac07c261d4487804e113e0293f8be07b5"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>json</b> = nlohmann::json</td></tr>
 <tr class="separator:ac07c261d4487804e113e0293f8be07b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -124,12 +133,9 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>shapeDist</b> = std:
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a5a127da90b5a861d927114100be03196"><td class="memItemLeft" align="right" valign="top"><a id="a5a127da90b5a861d927114100be03196"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>posToBuf</b> (const unsigned int &amp;x, const unsigned int &amp;y)</td></tr>
-<tr class="separator:a5a127da90b5a861d927114100be03196"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6f03cf92150dfa53afdc4c593288b43c"><td class="memItemLeft" align="right" valign="top"><a id="a6f03cf92150dfa53afdc4c593288b43c"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>applyColor</b> (pixel *buffer, const unsigned int &amp;x, const unsigned int &amp;y, const <a class="el" href="structRayMarching_1_1color__t.html">color_t</a> &amp;c)</td></tr>
-<tr class="separator:a6f03cf92150dfa53afdc4c593288b43c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afeaa3c8f3286b854e4d4a7507785255f"><td class="memItemLeft" align="right" valign="top"><a id="afeaa3c8f3286b854e4d4a7507785255f"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>posToBuf</b> (const unsigned int &amp;x, const unsigned int &amp;y, <a class="el" href="namespaceRayMarching.html#ac058f45b0bed8c0ac3c5881cf9fd0c55">Settings_t</a> set)</td></tr>
+<tr class="separator:afeaa3c8f3286b854e4d4a7507785255f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae2490016eb0eba66200f11245f54a322"><td class="memItemLeft" align="right" valign="top"><a id="ae2490016eb0eba66200f11245f54a322"></a>
 Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>getPerpendicular</b> (Vector3d vec, const Vector3d &amp;onLine, const Vector3d &amp;direction)</td></tr>
 <tr class="separator:ae2490016eb0eba66200f11245f54a322"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -140,22 +146,22 @@ Variables</h2></td></tr>
 constexpr double&#160;</td><td class="memItemRight" valign="bottom"><b>HALF_CIRCLE</b> = M_PI / 180</td></tr>
 <tr class="separator:a66360d3a631bb0ee90df2d466413108d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a79c4370b8526f662368ca8542e15e25a"><td class="memItemLeft" align="right" valign="top"><a id="a79c4370b8526f662368ca8542e15e25a"></a>
-constexpr <a class="el" href="structRayMarching_1_1color__t.html">color_t</a>&#160;</td><td class="memItemRight" valign="bottom"><b>WHITE</b> = {0xff, 0xff, 0xff}</td></tr>
+constexpr <a class="el" href="structRayMarching_1_1color.html">color_t</a>&#160;</td><td class="memItemRight" valign="bottom"><b>WHITE</b> = {0xff, 0xff, 0xff}</td></tr>
 <tr class="separator:a79c4370b8526f662368ca8542e15e25a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a084ca335009c33747737552a9e0d900c"><td class="memItemLeft" align="right" valign="top"><a id="a084ca335009c33747737552a9e0d900c"></a>
-constexpr <a class="el" href="structRayMarching_1_1color__t.html">color_t</a>&#160;</td><td class="memItemRight" valign="bottom"><b>GRAY</b> = {0xbf, 0xbf, 0xbf}</td></tr>
+constexpr <a class="el" href="structRayMarching_1_1color.html">color_t</a>&#160;</td><td class="memItemRight" valign="bottom"><b>GRAY</b> = {0xbf, 0xbf, 0xbf}</td></tr>
 <tr class="separator:a084ca335009c33747737552a9e0d900c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8902ef5257a746755eb2d295a2615895"><td class="memItemLeft" align="right" valign="top"><a id="a8902ef5257a746755eb2d295a2615895"></a>
-constexpr <a class="el" href="structRayMarching_1_1color__t.html">color_t</a>&#160;</td><td class="memItemRight" valign="bottom"><b>BLACK</b> = {0x00, 0x00, 0x00}</td></tr>
+constexpr <a class="el" href="structRayMarching_1_1color.html">color_t</a>&#160;</td><td class="memItemRight" valign="bottom"><b>BLACK</b> = {0x00, 0x00, 0x00}</td></tr>
 <tr class="separator:a8902ef5257a746755eb2d295a2615895"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f046b84eef3644e7d80a936283a5ae8"><td class="memItemLeft" align="right" valign="top"><a id="a8f046b84eef3644e7d80a936283a5ae8"></a>
-constexpr <a class="el" href="structRayMarching_1_1color__t.html">color_t</a>&#160;</td><td class="memItemRight" valign="bottom"><b>RED</b> = {0xff, 0x00, 0x00}</td></tr>
+constexpr <a class="el" href="structRayMarching_1_1color.html">color_t</a>&#160;</td><td class="memItemRight" valign="bottom"><b>RED</b> = {0xff, 0x00, 0x00}</td></tr>
 <tr class="separator:a8f046b84eef3644e7d80a936283a5ae8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a866a20436e458dc88998d6a9046aeaf7"><td class="memItemLeft" align="right" valign="top"><a id="a866a20436e458dc88998d6a9046aeaf7"></a>
-constexpr <a class="el" href="structRayMarching_1_1color__t.html">color_t</a>&#160;</td><td class="memItemRight" valign="bottom"><b>GREEN</b> = {0x00, 0xff, 0x00}</td></tr>
+constexpr <a class="el" href="structRayMarching_1_1color.html">color_t</a>&#160;</td><td class="memItemRight" valign="bottom"><b>GREEN</b> = {0x00, 0xff, 0x00}</td></tr>
 <tr class="separator:a866a20436e458dc88998d6a9046aeaf7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab77ee5dd18747fc3c6a47acd474bac6b"><td class="memItemLeft" align="right" valign="top"><a id="ab77ee5dd18747fc3c6a47acd474bac6b"></a>
-constexpr <a class="el" href="structRayMarching_1_1color__t.html">color_t</a>&#160;</td><td class="memItemRight" valign="bottom"><b>BLUE</b> = {0x00, 0x00, 0xff}</td></tr>
+constexpr <a class="el" href="structRayMarching_1_1color.html">color_t</a>&#160;</td><td class="memItemRight" valign="bottom"><b>BLUE</b> = {0x00, 0x00, 0xff}</td></tr>
 <tr class="separator:ab77ee5dd18747fc3c6a47acd474bac6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c489beff0cd22fa38ea0d77c3d9fad9"><td class="memItemLeft" align="right" valign="top"><a id="a1c489beff0cd22fa38ea0d77c3d9fad9"></a>
 constexpr unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>WIDTH</b> = 1280</td></tr>

@@ -117,6 +117,9 @@ namespace RayMarching {
          * @return Color for a given ray
          */
         [[nodiscard]] color_t handleRay(Line& ray, color_t color = BLACK, unsigned int reflection = 0) const;
+
+        inline
+        void applyColor(const unsigned int &x, const unsigned int &y, const color_t &c);
     protected:
         /**
          * Sends command to the render threads and awaits for the synchronization
