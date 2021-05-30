@@ -5,7 +5,7 @@
 #include <const.h>
 
 namespace RayMarching {
-    /** \brief Container for const camera Settings
+    /** \brief Container for const Camera Settings
      *
      *  Structure used for defining Camera settings in one place. Create default settings
      *  and then customize for your needs

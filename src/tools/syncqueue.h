@@ -7,21 +7,46 @@
 
 namespace RayMarching {
 
+    /**
+     * \brief Basic synchronized Queue template
+     *
+     * Synchronized Queue responsible for Camera threads coordination
+     * @tparam T Queue content typename
+     */
     template<typename T>
     class SyncQueue {
     private:
-        std::queue<T> _queue;
-        std::mutex _mutex;
-        std::condition_variable _cond;
+        std::queue<T> _queue;                /**< Internal Queue */
+        std::mutex _mutex;                   /**< Internal Mutex */
+        std::condition_variable _cond;       /**< Internal condition variable */
     public:
+
+        /**
+         * SyncQueue default constructor
+         */
         SyncQueue() = default;
 
+        /**
+         * SyncQueue default destructor
+         */
         ~SyncQueue() = default;
 
+        /**
+         * Checks if queue has any content
+         * @return True if internal queue is empty
+         */
         bool empty();
 
+        /**
+         * Pushes element into the queue and informs single awaiting member
+         * @param element item pushed into the queue
+         */
         void enqueue(T element);
 
+        /**
+         * Gets and pops item from the SyncQueue. If internal queue is empty awaits for the content
+         * @return SyncQueue front
+         */
         T deque();
     };
 

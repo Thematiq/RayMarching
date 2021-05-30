@@ -5,6 +5,7 @@
 ## Table of contents
 
 [Environment setup](#setup)
+
 [Troubleshooting](#troubleshooting)
 
 ---
