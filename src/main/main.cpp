@@ -8,7 +8,7 @@
 #include <Eigen/Dense>
 
 using namespace Eigen;
-using pixel = unsigned char;
+using namespace RayMarching;
 
 int main() {
     glfwInit();
@@ -23,7 +23,7 @@ int main() {
     const auto loc = Vector3d(4, -3, 0);
     const auto dir = Vector3d(0, 0, 0);
     const auto up = Vector3d(0, 0, 3);
-    Camera camera = Camera(loc, dir, up, true);
+    Camera camera = Camera(loc, dir, up, false);
     std::shared_ptr<Scene> scene = camera.getScene();
 
 
