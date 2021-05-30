@@ -2,6 +2,7 @@
 #define RAYMARCHING_MODELS3_H
 #include <cfloat>
 #include <cmath>
+#include "const.h"
 #include "colors.h"
 #include "algebra.h"
 #include <Eigen/Dense>
@@ -9,8 +10,9 @@
 class SDFObject {
 public:
     virtual ~SDFObject() = default;
-    virtual double getDist(Eigen::Vector3d const &p) const = 0;
-    virtual color_t getColor() const = 0;
+    [[nodiscard]] virtual double getDist(Eigen::Vector3d const &p) const = 0;
+    [[nodiscard]] virtual color_t getColor() const = 0;
+    [[nodiscard]] virtual Line getReflection(const Line& ray) const = 0;
 };
 
 class Shape : public SDFObject {
@@ -21,6 +23,7 @@ public:
     explicit Shape(Eigen::Vector3d p) : _pos(std::move(p)) {};
     [[nodiscard]] virtual Eigen::Vector3d getPos() const { return _pos; };
     [[nodiscard]] color_t getColor() const override { return _color; }
+    [[nodiscard]] Line getReflection(const Line& ray) const override;;
     void setColor(color_t color){ _color = color; }
 };
 

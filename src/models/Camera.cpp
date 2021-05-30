@@ -61,7 +61,7 @@ Camera::Camera(Vector3d localization, const Vector3d& direction, const Vector3d&
 
 Line Camera::generateRay(unsigned int x, unsigned int y) const {
     double angleHorizontal = (x - (double)(_width - 1) / 2) * _viewAngle / _width;
-    double angleVertical = - (y - (double)(_height - 1) / 2) * _viewAngle / _width;
+    double angleVertical = (y - (double)(_height - 1) / 2) * _viewAngle / _width;
     Vector3d pixelPoint = _localization;
     pixelPoint = (_forward * (cos(angleHorizontal * HALF_CIRCLE) * cos(angleVertical * HALF_CIRCLE))) + pixelPoint;
     pixelPoint = (_right * (sin(angleHorizontal * HALF_CIRCLE) * cos(angleVertical * HALF_CIRCLE))) + pixelPoint;
@@ -70,21 +70,50 @@ Line Camera::generateRay(unsigned int x, unsigned int y) const {
     return Line(vec, _localization);
 }
 
-color_t Camera::handleRay(unsigned int x, unsigned int y) const {
-    Line ray = _rays[y][x];
+color_t Camera::handleRay(Line& ray, color_t color, unsigned int reflection) const{
+    if (reflection == 0) {
+        ray.reset();
+    }
     for(int step = 0; step < MAX_STEPS; step++){
         shapeDist pair = _scene->signedPairFunction(ray.getVec());
+
         if(pair.first < EPSILON){
-            return pair.second->getColor();
+            Line reflected_ray = pair.second->getReflection(ray);
+            double factor = (1.5 - 0.5 *ray.getDirection().dot(reflected_ray.getDirection()) /
+                                 (ray.getDirection().norm() * reflected_ray.getDirection().norm())) / 2;
+            color.R = (pixel)((1 - factor) * color.R + factor * pair.second->getColor().R);
+            color.G = (pixel)((1 - factor) * color.G + factor * pair.second->getColor().G);
+            color.B = (pixel)((1 - factor) * color.B + factor * pair.second->getColor().B);
+
+            if(reflection == MAX_REFLECTIONS){
+                return color;
+            }
+            else{
+                reflected_ray.moveBy(EPSILON);
+                return handleRay(reflected_ray, color, reflection + 1);
+            }
         }
         ray.moveBy(pair.first);
+        if((_localization - ray.getVec()).norm() > MAX_DISTANCE){ break; }
     }
+    if(reflection > 0){ return  color; }
     return BACKGROUND;
 }
 
 pixel* Camera::takePhoto() {
     applyCommand(CameraCommands::DRAW);
     return _buffer;
+}
+
+void Camera::setCamera(const Vector3d &localization, const Vector3d &direction, const Vector3d &up) {
+    _localization = localization;
+    _forward = (direction - _localization).normalized();
+    _upward = getPerpendicular(_forward, _localization, up).normalized();
+    _right = _forward.cross(_upward).normalized();
+    applyCommand(CameraCommands::GENERATE);
+    if (_interlace) {
+        applyCommand(CameraCommands::GENERATE);
+    }
 }
 
 void Camera::applyCommand(Camera::CameraCommands cmd) {
@@ -106,10 +135,12 @@ void Camera::threadHandler() {
                     _rays[y][x] = generateRay(x, y);
                     break;
                 case CameraCommands::DRAW:
-                    applyColor(_buffer, x, y, handleRay(x, y));
+                    applyColor(_buffer, x, y, handleRay(_rays[y][x]));
                     break;
             }
         }
         ++_cn;
     }
 }
+
+
