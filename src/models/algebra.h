@@ -8,6 +8,9 @@
 
 namespace RayMarching {
 
+    /**
+     * \brief Marching Ray implementation
+     */
     class Line {
     private:
         Eigen::Vector3d begin;
