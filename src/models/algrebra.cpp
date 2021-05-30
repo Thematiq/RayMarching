@@ -1,11 +1,13 @@
 #include "algebra.h"
 
-using namespace Eigen;
+namespace RayMarching {
+    using namespace Eigen;
 
-void Line::moveBy(double distance) {
-    _t += distance / _dir_norm;
-}
+    void Line::moveBy(double distance) {
+        _t += distance / _dir_norm;
+    }
 
-Vector3d Line::getVec() const {
-    return (direction * _t) + begin;
+    Vector3d Line::getVec() const {
+        return (direction * _t) + begin;
+    }
 }

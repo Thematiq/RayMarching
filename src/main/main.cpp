@@ -8,6 +8,7 @@
 #include <Eigen/Dense>
 
 using namespace Eigen;
+using namespace RayMarching;
 using pixel = unsigned char;
 
 int main() {
