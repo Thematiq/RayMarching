@@ -17,6 +17,7 @@ public:
      : begin(std::move(begin)), direction(std::move(direction)), _t(0), _dir_norm(direction.norm()) {}
     void moveBy(double distance);
     [[nodiscard]] Eigen::Vector3d getVec() const;
+    [[nodiscard]] Eigen::Vector3d getDirection() const { return direction; }
 };
 
 #endif //RAYMARCHING_ALGEBRA_H
