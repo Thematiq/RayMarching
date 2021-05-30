@@ -73,6 +73,8 @@ namespace RayMarching {
 
         pixel *takePhoto();
 
+        void setCamera(const Eigen::Vector3d &localization, const Eigen::Vector3d &direction, const Eigen::Vector3d &up);
+
     private:
         void applyCommand(Camera::CameraCommands cmd);
 
@@ -80,7 +82,7 @@ namespace RayMarching {
 
         [[nodiscard]] Line generateRay(unsigned int x, unsigned int y) const;
 
-        [[nodiscard]] color_t handleRay(unsigned int x, unsigned int y) const;
+        [[nodiscard]] color_t handleRay(Line& ray, color_t color = BLACK, unsigned int reflection = 0) const;
     };
 }
 

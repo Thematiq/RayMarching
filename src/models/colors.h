@@ -12,6 +12,7 @@ namespace RayMarching {
     } color_t;
 
     constexpr color_t WHITE = {0xff, 0xff, 0xff};
+    constexpr color_t GRAY    = {0xbf, 0xbf, 0xbf};
     constexpr color_t BLACK = {0x00, 0x00, 0x00};
     constexpr color_t RED = {0xff, 0x00, 0x00};
     constexpr color_t GREEN = {0x00, 0xff, 0x00};

@@ -9,7 +9,6 @@
 
 using namespace Eigen;
 using namespace RayMarching;
-using pixel = unsigned char;
 
 int main() {
     glfwInit();
@@ -21,24 +20,26 @@ int main() {
     }
 
 
-    const auto loc = Vector3d(-10, 0, 0);
+    const auto loc = Vector3d(4, -3, 0);
     const auto dir = Vector3d(0, 0, 0);
-    const auto up = Vector3d(0, 0, 1);
-    Camera camera = Camera(loc, dir, up, true);
+    const auto up = Vector3d(0, 0, 3);
+    Camera camera = Camera(loc, dir, up, false);
     std::shared_ptr<Scene> scene = camera.getScene();
 
 
-    Cube q(Vector3d(0, -1, 0), 1);
-    scene->pushShape(&q);
-//    Sphere sphere1(Vector3d(0, -1, 0), 1);
-//    Sphere sphere2(Vector3d(0, 1, 0), 1);
-//    sphere1.setColor(BLUE);
-//    scene->pushShape(&sphere1);
-//    scene->pushShape(&sphere2);
+    Cube qube(Vector3d(0, -1, 0), 1);
+    qube.setColor(GREEN);
+    scene->pushShape(&qube);
+    Sphere sphere(Vector3d(0, -2, 0), 1);
+    sphere.setColor(BLUE);
+    scene->pushShape(&sphere);
+    Sphere sphere1(Vector3d(0, 2, 0), 1);
+    sphere1.setColor(RED);
+    scene->pushShape(&sphere1);
 
     std::cout << "Context prepared" << std::endl;
 
-    constexpr unsigned int TRIALS = 10;
+    constexpr unsigned int TRIALS = 16;
     unsigned int times[TRIALS];
     pixel* buffer;
 
@@ -62,12 +63,18 @@ int main() {
     glfwMakeContextCurrent(window);
     glViewport(0, 0, WIDTH, HEIGHT);
 
+    double angle = 0;
     while (!glfwWindowShouldClose(window)) {
         buffer = camera.takePhoto();
         glDrawPixels(WIDTH, HEIGHT, GL_RGB, GL_UNSIGNED_BYTE, buffer);
 
         glfwPollEvents();
         glfwSwapBuffers(window);
+
+        camera.setCamera(Vector3d(4 * cos(angle), 4 * sin(angle), 0),
+                         Vector3d(0, 0, 0),
+                         Vector3d(0, 0, 3));
+        angle += 0.01;
     }
 
     glfwDestroyWindow(window);
