@@ -17,7 +17,6 @@ namespace RayMarching {
     constexpr double MAX_DISTANCE = 5;
     constexpr unsigned int MAX_STEPS = 64;
     constexpr unsigned int MAX_REFLECTIONS = 5;
-
 }
 /*! @} End of Doxygen Groups */
 

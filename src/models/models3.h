@@ -4,6 +4,7 @@
 #include <cmath>
 #include <memory>
 #include <Eigen/Dense>
+#include <Eigen/Geometry>
 #include <utility>
 #include "const.h"
 #include "colors.h"
@@ -74,7 +75,7 @@ namespace RayMarching {
          * Creates new combination
          * @param left unique pointer to the SDFObject
          * @param right unique pointer to the SDFObject
-         * @param op type of operation
+         * @param op type of SDFOperation
          */
         SDFCombination(std::unique_ptr<SDFObject> left, std::unique_ptr<SDFObject> right, SDFOperation op)
             : _left(std::move(left)), _right(std::move(right)), _op(op) {}
@@ -88,7 +89,18 @@ namespace RayMarching {
         Eigen::Vector3d _pos;
         color_t _color;
     public:
-        explicit Shape(Eigen::Vector3d p, color_t color = BLACK) : _pos(std::move(p)), _color(color) {};
+        /**
+         * Creates new abstract Shape
+         * @param color desired color
+         */
+        explicit Shape(color_t color = BLACK) : _pos(0), _color(color) {};
+
+        /**
+         * This construction will be deleted later on, position of the Shape will be applied by the TransformataObject
+         * @param p
+         * @param color
+         */
+        [[deprecated]] explicit Shape(Eigen::Vector3d p, color_t color = BLACK) : _pos(std::move(p)), _color(color) {};
         [[nodiscard]] virtual Eigen::Vector3d getPos() const { return _pos; };
         [[nodiscard]] color_t getColor(const Eigen::Vector3d &p) const override { return _color; }
         void setColor(color_t color){ _color = color; }
@@ -136,6 +148,103 @@ namespace RayMarching {
         Cylinder(Eigen::Vector3d p, double h, double r, color_t color = BLACK) : Shape(std::move(p), color), _hr(h, r) {};
 
         [[nodiscard]] double getDist(const Eigen::Vector3d &p) const override;
+    };
+
+    /** \brief Class representing SDFObject transformation in space
+     *
+     *  Class responsible for rotating, moving and other geometric transformations upon the provided SDFObject
+     */
+    class TransformataObject : public SDFObject {
+        // TODO TransformataObject doesn't work with SDFCombination
+        // Problem? Transfomata has to be applied for every primitive shape
+    private:
+        std::unique_ptr<SDFObject> _original;
+        double _scale;
+        Eigen::AngleAxisd _rotation;
+        Eigen::AngleAxisd _reverseRotation;
+        Eigen::Vector3d _translation;
+    protected:
+        void applyZeroRotation();
+    public:
+        /**
+         * Generates new transform for provided SDFObject
+         * @param object original object
+         */
+        TransformataObject(std::unique_ptr<SDFObject> object)
+            : _original(std::move(object)), _scale(1), _rotation(), _translation(), _reverseRotation() {}
+
+        /**
+         * Default destructor
+         */
+        ~TransformataObject() override = default;
+
+
+        /**
+         * Rotate object
+         * @param x X-axis rotation in degrees
+         * @param y Y-axis rotation in degrees
+         * @param z Z-axis rotation in degrees
+         */
+        void rotate(double x, double y, double z);
+
+        /**
+         * Sets object rotation
+         * @param x X-axis rotation in degrees
+         * @param y Y-axis rotation in degrees
+         * @param z Z-axis rotation in degrees
+         */
+        void setRotation(double x, double y, double z);
+
+        /**
+         * Applies scaling operation on a object
+         * @param s scaling factor
+         */
+        void scale(double s) { _scale *= s; }
+
+        /**
+         * Sets desired scaling factor
+         * @param s scaling factor
+         */
+        void setScale(double s) { _scale = s; }
+
+        /**
+         * Scaling getter
+         * @return current scale ratio
+         */
+        [[nodiscard]] double getScale() const { return _scale; }
+
+        /**
+         * Applies translation upon object
+         * @param p Translation's vector
+         */
+        void translate(const Eigen::Vector3d &p) { _translation += p; };
+
+        /**
+         * Sets new translation on object
+         * @param p Translation's vector
+         */
+        void setTranslation(const Eigen::Vector3d &p) { _translation = p; }
+
+        /**
+         * Translation Vector3d getter
+         * @return Current translation
+         */
+        [[nodiscard]] Eigen::Vector3d getTranslation() const { return _translation; }
+
+        /**
+         * SDF implementation
+         * @param p Requesting point
+         * @return Distance between SDFObject and the p
+         */
+        [[nodiscard]] double getDist(const Eigen::Vector3d &p) const override;
+
+        /**
+         * Color getter
+         * @param p Requesting point
+         * @return Closest color to the point from the SDFObject
+         */
+        [[nodiscard]] color_t getColor(const Eigen::Vector3d &p) const override { return _original->getColor(p); }
+
     };
 }
 
