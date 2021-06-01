@@ -112,7 +112,6 @@ endfunction()
 # ===================================================================
 
 find_package(OpenGL REQUIRED)
-find_package(GLM REQUIRED)
 find_package(GLFW3 REQUIRED)
 
 # ===================================================================
