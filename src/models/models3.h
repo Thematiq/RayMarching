@@ -243,7 +243,7 @@ namespace RayMarching {
          * @param p Requesting point
          * @return Closest color to the point from the SDFObject
          */
-        [[nodiscard]] color_t getColor(const Eigen::Vector3d &p) const override { return _original->getColor(p); }
+        [[nodiscard]] color_t getColor(const Eigen::Vector3d &p) const override;
 
     };
 }

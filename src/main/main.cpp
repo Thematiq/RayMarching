@@ -43,8 +43,8 @@ int main() {
     std::unique_ptr<SDFObject> s(new Sphere(Vector3d(0, -1, 0), 1.4, BLUE));
     std::unique_ptr<SDFObject> c(new Cylinder(Vector3d(0, -1, 0), 1, 1.4, GREEN));
     std::unique_ptr<SDFObject> u(new SDFCombination(std::move(q), std::move(s), SDFCombination::SDFOperation::INTERSECTION));
-//    std::unique_ptr<SDFObject> t(new SDFCombination(std::move(u), std::move(c), SDFCombination::SDFOperation::DIFFERENCE));
-    TransformataObject trans(std::move(u));
+    std::unique_ptr<SDFObject> t(new SDFCombination(std::move(u), std::move(c), SDFCombination::SDFOperation::DIFFERENCE));
+    TransformataObject trans(std::move(t));
     scene->pushShape(&trans);
 
     std::cout << "Context prepared" << std::endl;

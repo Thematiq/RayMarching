@@ -90,4 +90,8 @@ namespace RayMarching {
     double TransformataObject::getDist(const Eigen::Vector3d &p) const {
         return _original->getDist((_reverseRotation * (p - _translation)) / _scale) * _scale;
     }
+
+    color_t TransformataObject::getColor(const Eigen::Vector3d &p) const {
+        return _original->getColor((_reverseRotation * (p - _translation)) / _scale);
+    }
 }
