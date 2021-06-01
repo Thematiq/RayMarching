@@ -75,10 +75,10 @@ namespace RayMarching {
         if (reflection == 0) {
             ray.reset();
         }
-        for(int step = 0; step < MAX_STEPS; step++){
+        for(int step = 0; step < _settings.maxSteps; step++){
             shapeDist pair = _scene->signedPairFunction(ray.getVec());
 
-            if(pair.first < EPSILON){
+            if(pair.first < _settings.epsilon){
                 Line reflected_ray = pair.second->getReflection(ray);
                 color_t current_col = pair.second->getColor(ray.getVec());
                 double factor = (1.5 - 0.5 *ray.getDirection().dot(reflected_ray.getDirection()) /
@@ -87,16 +87,16 @@ namespace RayMarching {
                 color.G = (pixel)((1 - factor) * color.G + factor * current_col.G);
                 color.B = (pixel)((1 - factor) * color.B + factor * current_col.B);
 
-                if(reflection == MAX_REFLECTIONS){
+                if(reflection == _settings.maxReflections){
                     return color;
                 }
                 else{
-                    reflected_ray.moveBy(EPSILON);
+                    reflected_ray.moveBy(_settings.epsilon);
                     return handleRay(reflected_ray, color, reflection + 1);
                 }
             }
             ray.moveBy(pair.first);
-            if((_localization - ray.getVec()).norm() > MAX_DISTANCE){ break; }
+            if((_localization - ray.getVec()).norm() > _settings.maxDistance){ break; }
         }
         if (reflection > 0){ return  color; }
         return BACKGROUND;

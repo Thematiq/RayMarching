@@ -5,7 +5,6 @@
 #include <memory>
 
 #include "Camera.h"
-#include "const.h"
 #include <Eigen/Dense>
 
 using namespace Eigen;
@@ -14,13 +13,14 @@ using namespace RayMarching;
 int main() {
 
 
-    const auto loc = Vector3d(4, -3, 0);
+    const auto loc = Vector3d(6, -4, 0);
     const auto dir = Vector3d(0, 0, 0);
     const auto up = Vector3d(0, 0, 3);
     Settings_t settings = Settings_t();
     settings.interlace = true;
-    settings.width = 640;
+    settings.width = 720;
     settings.height = 480;
+    settings.maxDistance = 8;
     Camera camera = Camera(loc, dir, up, settings);
     std::shared_ptr<Scene> scene = camera.getScene();
 
@@ -43,8 +43,9 @@ int main() {
     std::unique_ptr<SDFObject> s(new Sphere(Vector3d(0, -1, 0), 1.4, BLUE));
     std::unique_ptr<SDFObject> c(new Cylinder(Vector3d(0, -1, 0), 1, 1.4, GREEN));
     std::unique_ptr<SDFObject> u(new SDFCombination(std::move(q), std::move(s), SDFCombination::SDFOperation::INTERSECTION));
-    SDFCombination t(std::move(u), std::move(c), SDFCombination::SDFOperation::DIFFERENCE);
-    scene->pushShape(&t);
+    std::unique_ptr<SDFObject> t(new SDFCombination(std::move(u), std::move(c), SDFCombination::SDFOperation::DIFFERENCE));
+    TransformataObject trans(std::move(t));
+    scene->pushShape(&trans);
 
     std::cout << "Context prepared" << std::endl;
 
@@ -83,7 +84,8 @@ int main() {
         camera.setCamera(Vector3d(4 * cos(angle), 4 * sin(angle), 0),
                          Vector3d(0, 0, 0),
                          Vector3d(0, 0, 3));
-        angle += 0.01;
+        angle += 0.03;
+        trans.rotate(2, 2, 2);
     }
 
     glfwDestroyWindow(window);

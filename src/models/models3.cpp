@@ -1,5 +1,10 @@
 #include "models3.h"
 
+static inline
+double degreesToRadians(const double &d) {
+    return M_PI * (d / 180);
+}
+
 namespace RayMarching {
     using namespace Eigen;
 
@@ -59,5 +64,34 @@ namespace RayMarching {
         Vector3d pos = p - _pos;
         Vector2d d = Vector2d(Vector2d(pos.x(), pos.z()).norm(), pos.y()) - _hr;
         return std::min(std::max(d.x(), d.y()), 0.0) + (d.array() < 0).select(0, d).norm();
+    }
+
+    void TransformataObject::applyZeroRotation() {
+        _rotation = Eigen::AngleAxisd(0, Eigen::Vector3d::UnitX()) *
+        Eigen::AngleAxisd(0, Eigen::Vector3d::UnitY()) *
+        Eigen::AngleAxisd(0, Eigen::Vector3d::UnitZ());
+        _reverseRotation = _rotation.inverse();
+    }
+
+    void TransformataObject::rotate(double x, double y, double z) {
+        _rotation =
+                _rotation *
+                AngleAxisd(degreesToRadians(x), Vector3d::UnitX()) *
+                AngleAxisd(degreesToRadians(y), Vector3d::UnitY()) *
+                AngleAxisd(degreesToRadians(z), Vector3d::UnitZ());
+        _reverseRotation = _rotation.inverse();
+    }
+
+    void TransformataObject::setRotation(double x, double y, double z) {
+        applyZeroRotation();
+        rotate(x, y, z);
+    }
+
+    double TransformataObject::getDist(const Eigen::Vector3d &p) const {
+        return _original->getDist((_reverseRotation * (p - _translation)) / _scale) * _scale;
+    }
+
+    color_t TransformataObject::getColor(const Eigen::Vector3d &p) const {
+        return _original->getColor((_reverseRotation * (p - _translation)) / _scale);
     }
 }
