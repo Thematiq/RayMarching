@@ -80,14 +80,34 @@ namespace RayMarching {
         SDFCombination(std::unique_ptr<SDFObject> left, std::unique_ptr<SDFObject> right, SDFOperation op)
             : _left(std::move(left)), _right(std::move(right)), _op(op) {}
 
+        /**
+         * Default destructor
+         */
+        ~SDFCombination() override = default;
+
+        /**
+         * SDF function
+         * @param p Requesting point
+         * @return distance to the SDFObject
+         */
         [[nodiscard]] double getDist(const Eigen::Vector3d &p) const override;
+
+        /**
+         * Color getter
+         * @param p Requesting point
+         * @return closest color within the SDFCombination
+         */
         [[nodiscard]] color_t getColor(const Eigen::Vector3d &p) const override;
     };
 
+    /** \brief Abstract Shape description
+     *
+     * Implement few component used in all primitives
+     */
     class Shape : public SDFObject {
     protected:
-        Eigen::Vector3d _pos;
-        color_t _color;
+        Eigen::Vector3d _pos;       /**< Shape position in space */
+        color_t _color;             /**< Shape's color */
     public:
         /**
          * Creates new abstract Shape
@@ -97,28 +117,68 @@ namespace RayMarching {
 
         /**
          * This construction will be deleted later on, position of the Shape will be applied by the TransformataObject
-         * @param p
-         * @param color
+         * @param p Shape's position in space
+         * @param color Shape's color
          */
-        [[deprecated]] explicit Shape(Eigen::Vector3d p, color_t color = BLACK) : _pos(std::move(p)), _color(color) {};
+        [[deprecated("TransformataObject is now responsible for the translation")]] explicit Shape(Eigen::Vector3d p, color_t color = BLACK) : _pos(std::move(p)), _color(color) {};
+
+        /**
+         * Position getter
+         * @return current object position
+         */
         [[nodiscard]] virtual Eigen::Vector3d getPos() const { return _pos; };
+
+        /**
+         * Color getter for render engine
+         * @param p Requesting point
+         * @return Closest color to the point
+         */
         [[nodiscard]] color_t getColor(const Eigen::Vector3d &p) const override { return _color; }
+
+        /**
+         * Color setter
+         * @param color desired color
+         */
         void setColor(color_t color){ _color = color; }
     };
 
-
-
+    /** \brief Sphere Shape
+     *
+     */
     class Sphere : public Shape {
     private:
         double _radius;
     public:
+        /**
+         * Default constructor
+         * @param p Position in space
+         * @param r radius
+         * @param color Sphere color
+         */
         explicit Sphere(Eigen::Vector3d p, double r = 0, color_t color = BLACK) : Shape(std::move(p), color), _radius(r) {};
 
+        /**
+         * Default destructor
+         */
+        ~Sphere() override = default;
+
+        /**
+         * SDF function
+         * @param p Requesting point
+         * @return distance to the SDFObject
+         */
         [[nodiscard]] double getDist(const Eigen::Vector3d &p) const override;
 
+        /**
+         * Radius getter
+         * @return Sphere radius
+         */
         [[nodiscard]] double getRadius() const { return _radius; }
     };
 
+    /** \brief Cube Shape
+     *
+     */
     class Cube : public Shape {
     private:
         Eigen::Vector3d _bound;
@@ -130,11 +190,28 @@ namespace RayMarching {
          */
         Cube(Eigen::Vector3d p, double bound, color_t color = BLACK) : Shape(std::move(p), color), _bound(bound, bound, bound) {};
 
+        /**
+         * Default destructor
+         */
+        ~Cube() override = default;
+
+        /**
+         * SDF function
+         * @param p Requesting point
+         * @return distance to the SDFObject
+         */
         [[nodiscard]] double getDist(const Eigen::Vector3d &p) const override;
 
+        /**
+         * Bound getter
+         * @return Cube's side length
+         */
         [[nodiscard]] double getBound() const { return _bound.x(); }
     };
 
+    /** \brief Cylinder Shape
+     *
+     */
     class Cylinder : public Shape {
     private:
         Eigen::Vector2d _hr;
@@ -147,6 +224,16 @@ namespace RayMarching {
          */
         Cylinder(Eigen::Vector3d p, double h, double r, color_t color = BLACK) : Shape(std::move(p), color), _hr(h, r) {};
 
+        /**
+         * Default destructor
+         */
+        ~Cylinder() override = default;
+
+        /**
+         * SDF function
+         * @param p  Requesting point
+         * @return distance to the SDFObject
+         */
         [[nodiscard]] double getDist(const Eigen::Vector3d &p) const override;
     };
 

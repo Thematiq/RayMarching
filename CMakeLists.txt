@@ -125,13 +125,6 @@ if (${BUILD_UTEST})
     # Unit tests
     # ===================================================================
     message("===== RUNNING UNIT TESTS BUILD =====")
-    # Options
-    option(MODELS_TEST "Run 2D models unit tests" ON)
-
-    if (${MODELS_TEST})
-        message("Setting up models tests")
-        add_subdirectory(tests/models)
-    endif()
 
 else()
     # ===================================================================
