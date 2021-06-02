@@ -13,6 +13,8 @@ using namespace RayMarching;
 int main() {
 
 
+
+    // Prepare the Scene and the Camera
     const auto loc = Vector3d(6, -4, 0);
     const auto dir = Vector3d(0, 0, 0);
     const auto up = Vector3d(0, 0, 3);
@@ -24,6 +26,7 @@ int main() {
     Camera camera = Camera(loc, dir, up, settings);
     std::shared_ptr<Scene> scene = camera.getScene();
 
+    // Create the OpenGL window with the same shape
     glfwInit();
     GLFWwindow* window = glfwCreateWindow(settings.width, settings.height, "RayMarching", nullptr, nullptr);
     if (window == nullptr) {
@@ -39,6 +42,8 @@ int main() {
 //    scene->pushShape(&sphere);
 //    Sphere sphere1(Vector3d(0, 2, 0), 1, RED);
 //    scene->pushShape(&sphere1);
+
+    // Create shapes and push them into the scene
     std::unique_ptr<SDFObject> q( new Cube(Vector3d(0, -1, 0), 1, RED));
     std::unique_ptr<SDFObject> s(new Sphere(Vector3d(0, -1, 0), 1.4, BLUE));
     std::unique_ptr<SDFObject> c(new Cylinder(Vector3d(0, -1, 0), 1, 1.4, GREEN));
@@ -47,8 +52,9 @@ int main() {
     TransformataObject trans(std::move(t));
     scene->pushShape(&trans);
 
-    std::cout << "Context prepared" << std::endl;
 
+    // Basic benchmark before the launch
+    std::cout << "Context prepared" << std::endl;
     constexpr unsigned int TRIALS = 16;
     unsigned int times[TRIALS];
     pixel* buffer;
@@ -69,18 +75,19 @@ int main() {
     std::cout << "Avg time (ms) " << total / TRIALS << std::endl;
     std::cout << "Avg FPS " << (1000.0f * TRIALS) / total << std::endl;
 
-
+    // Prepare the OpenGL window
     glfwMakeContextCurrent(window);
     glViewport(0, 0, settings.width, settings.height);
 
     double angle = 0;
     while (!glfwWindowShouldClose(window)) {
+        // Render and draw onto window
         buffer = camera.takePhoto();
         glDrawPixels(settings.width, settings.height, GL_RGB, GL_UNSIGNED_BYTE, buffer);
-
         glfwPollEvents();
         glfwSwapBuffers(window);
 
+        // Move the camera and shapes
         camera.setCamera(Vector3d(4 * cos(angle), 4 * sin(angle), 0),
                          Vector3d(0, 0, 0),
                          Vector3d(0, 0, 3));
@@ -90,6 +97,5 @@ int main() {
 
     glfwDestroyWindow(window);
     glfwTerminate();
-    delete[] buffer;
     exit(EXIT_SUCCESS);
 }
